@@ -1,0 +1,21 @@
+- Do not try to run the projects locally. Only through `docker compose run --rm app sh -c COMMAND_EXAMPLE`.
+- Keep answers concise and direct.
+- Suggest alternative solutions.
+- Avoid unnecessary explanations.
+- Prioritize technical details over generic advice.
+- When creating new models, use drf-spectacular when appropriate and do not forget to register the model in django admin.
+- Never create README files or documentation if not asked to do it. Comments are allowed.
+- Always offer the alternatives before making changes. 
+- Include the (recommended) approach in the list.
+- Remember of creating log entries when appliable.
+- When creating a file that will be runned via docker, check if the file is in WORKDIR directory.
+- When in need of an example for tests purposing:
+    - PL 4381/2023 is an existing proposition, with sf_id `8797561` and cd_id `2386490`.
+- When trying to test somethin inside django prefer to use the following syntax without escaping the slashes and counterslashes:
+```
+docker compose run --rm app python manage.py shell -c string_containing_script
+```
+- If trying to test using python scripts check if the file is in WORKDIR folder (usually /app).
+- Everything related to frontend tech shall be explained. Presume that I am a backend software engineer.
+- Frontend tests shall use hot reload
+- Alert me if I am doing something that violates the good principles of software engineering.
