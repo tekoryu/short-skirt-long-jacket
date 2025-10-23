@@ -1,0 +1,30 @@
+"""
+Django command to wait for database to be available.
+"""
+import time
+import logging
+from django.core.management.base import BaseCommand
+from django.db import connections
+from django.db.utils import OperationalError
+
+logger = logging.getLogger(__name__)
+
+
+class Command(BaseCommand):
+    """Django command to wait for database."""
+
+    help = 'Wait for database to become available'
+
+    def handle(self, *args, **options):
+        """Entrypoint for command."""
+        self.stdout.write('Waiting for database...')
+        db_conn = None
+        while not db_conn:
+            try:
+                db_conn = connections['default']
+                db_conn.ensure_connection()
+            except OperationalError:
+                self.stdout.write('Database unavailable, waiting 1 second...')
+                time.sleep(1)
+
+        self.stdout.write(self.style.SUCCESS('Database available!'))
