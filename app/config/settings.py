@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', "django-insecure-hj6t9=uc6si4+ilj!u9#v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "apps.core",
     "apps.cities",
+    "apps.auth",
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,11 @@ MEDIA_ROOT = os.environ.get('MEDIA_ROOT', '/vol/web/media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Custom User Model
+AUTH_USER_MODEL = 'custom_auth.User'
+
+# Login/Logout URLs
+LOGIN_URL = 'auth:login'
+LOGIN_REDIRECT_URL = 'core:main'
+LOGOUT_REDIRECT_URL = 'auth:login'

@@ -1,0 +1,153 @@
+
+[
+  {
+    "name": "Sócrates",
+    "city": "Atenas",
+    "full_name": "Sócrates de Atenas"
+  },
+  {
+    "name": "Platão",
+    "city": "Atenas",
+    "full_name": "Platão de Atenas"
+  },
+  {
+    "name": "Aristóteles",
+    "city": "Estagira",
+    "full_name": "Aristóteles de Estagira"
+  },
+  {
+    "name": "Tales",
+    "city": "Mileto",
+    "full_name": "Tales de Mileto"
+  },
+  {
+    "name": "Pitágoras",
+    "city": "Samos",
+    "full_name": "Pitágoras de Samos"
+  },
+  {
+    "name": "Heráclito",
+    "city": "Éfeso",
+    "full_name": "Heráclito de Éfeso"
+  },
+  {
+    "name": "Epicuro",
+    "city": "Samos",
+    "full_name": "Epicuro de Samos"
+  },
+  {
+    "name": "Zenão",
+    "city": "Cítio",
+    "full_name": "Zenão de Cítio"
+  },
+  {
+    "name": "Parmênides",
+    "city": "Eleia",
+    "full_name": "Parmênides de Eleia"
+  },
+  {
+    "name": "Anaximandro",
+    "city": "Mileto",
+    "full_name": "Anaximandro de Mileto"
+  },
+  {
+    "name": "Anaxímenes",
+    "city": "Mileto",
+    "full_name": "Anaxímenes de Mileto"
+  },
+  {
+    "name": "Demócrito",
+    "city": "Abdera",
+    "full_name": "Demócrito de Abdera"
+  },
+  {
+    "name": "Leucipo",
+    "city": "Mileto",
+    "full_name": "Leucipo de Mileto"
+  },
+  {
+    "name": "Górgias",
+    "city": "Leontinos",
+    "full_name": "Górgias de Leontinos"
+  },
+  {
+    "name": "Protágoras",
+    "city": "Abdera",
+    "full_name": "Protágoras de Abdera"
+  },
+  {
+    "name": "Hípias",
+    "city": "Élis",
+    "full_name": "Hípias de Élis"
+  },
+  {
+    "name": "Pródico",
+    "city": "Ceos",
+    "full_name": "Pródico de Ceos"
+  },
+  {
+    "name": "Antístenes",
+    "city": "Atenas",
+    "full_name": "Antístenes de Atenas"
+  },
+  {
+    "name": "Diógenes",
+    "city": "Sínope",
+    "full_name": "Diógenes de Sínope"
+  },
+  {
+    "name": "Crates",
+    "city": "Tebas",
+    "full_name": "Crates de Tebas"
+  },
+  {
+    "name": "Pirro",
+    "city": "Élis",
+    "full_name": "Pirro de Élis"
+  },
+  {
+    "name": "Timeu",
+    "city": "Fliunte",
+    "full_name": "Timeu de Fliunte"
+  },
+  {
+    "name": "Plotino",
+    "city": "Licópolis",
+    "full_name": "Plotino de Licópolis"
+  },
+  {
+    "name": "Porfírio",
+    "city": "Tiro",
+    "full_name": "Porfírio de Tiro"
+  },
+  {
+    "name": "Jâmblico",
+    "city": "Cálcis",
+    "full_name": "Jâmblico de Cálcis"
+  },
+  {
+    "name": "Proclo",
+    "city": "Constantinopla",
+    "full_name": "Proclo de Constantinopla"
+  },
+  {
+    "name": "Hipátia",
+    "city": "Alexandria",
+    "full_name": "Hipátia de Alexandria"
+  },
+  {
+    "name": "Cícero",
+    "city": "Arpino",
+    "full_name": "Cícero de Arpino"
+  },
+  {
+    "name": "Sêneca",
+    "city": "Córdova",
+    "full_name": "Sêneca de Córdova"
+  },
+  {
+    "name": "Marco Aurélio",
+    "city": "Roma",
+    "full_name": "Marco Aurélio de Roma"
+  }
+]

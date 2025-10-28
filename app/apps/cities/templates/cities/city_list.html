@@ -1,0 +1,57 @@
+{% extends "core/base.html" %}
+
+{% block title %}Cities - Permission Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>Cities List</h3>
+                    <div>
+                        <a href="{% url 'cities:download_cities' %}" class="btn btn-success me-2">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <a href="{% url 'cities:city_api' %}" class="btn btn-info">
+                            <i class="fas fa-code"></i> API
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if cities %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>State</th>
+                                        <th>Population</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for city in cities %}
+                                    <tr>
+                                        <td>{{ city.name }}</td>
+                                        <td>{{ city.state }}</td>
+                                        <td>{{ city.population|default:"N/A" }}</td>
+                                        <td>
+                                            <a href="{% url 'cities:edit_city' city.id %}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No cities found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

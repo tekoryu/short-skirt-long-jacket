@@ -1,0 +1,139 @@
+{% extends "core/base.html" %}
+
+{% block title %}Profile - {{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>User Information</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ user.get_full_name|default:"Not provided" }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Department:</strong> {{ user.department|default:"Not specified" }}</p>
+                    <p><strong>Position:</strong> {{ user.position|default:"Not specified" }}</p>
+                    <p><strong>Phone:</strong> {{ user.phone|default:"Not provided" }}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </p>
+                    <p><strong>Verified:</strong> 
+                        <span class="badge {% if user.is_verified %}bg-success{% else %}bg-warning{% endif %}">
+                            {% if user.is_verified %}Verified{% else %}Pending{% endif %}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>My Permissions</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Direct Permissions</h5>
+                    {% if user_permissions %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Resource</th>
+                                        <th>Permission</th>
+                                        <th>Granted</th>
+                                        <th>Expires</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for perm in user_permissions %}
+                                    <tr>
+                                        <td>{{ perm.resource_permission.resource_name }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ perm.resource_permission.permission_type }}</span>
+                                        </td>
+                                        <td>{{ perm.granted_at|date:"M d, Y" }}</td>
+                                        <td>{{ perm.expires_at|date:"M d, Y"|default:"Never" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No direct permissions assigned.</p>
+                    {% endif %}
+                    
+                    <h5 class="mt-4">Group Permissions</h5>
+                    {% if user_groups %}
+                        <div class="mb-3">
+                            <strong>Groups:</strong>
+                            {% for group in user_groups %}
+                                <span class="badge bg-secondary me-1">{{ group.group.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if group_permissions %}
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Resource</th>
+                                            <th>Permission</th>
+                                            <th>Group</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for perm in group_permissions %}
+                                        <tr>
+                                            <td>{{ perm.resource_permission.resource_name }}</td>
+                                            <td>
+                                                <span class="badge bg-info">{{ perm.resource_permission.permission_type }}</span>
+                                            </td>
+                                            <td>{{ perm.group.name }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No group permissions available.</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted">Not assigned to any groups.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h4>Recent Activity</h4>
+                </div>
+                <div class="card-body">
+                    {% if recent_logs %}
+                        <div class="list-group">
+                            {% for log in recent_logs %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ log.get_action_display }}</h6>
+                                    <small>{{ log.created_at|date:"M d, Y H:i" }}</small>
+                                </div>
+                                <p class="mb-1">{{ log.resource }}</p>
+                                {% if log.details %}
+                                    <small>{{ log.details }}</small>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent activity.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
