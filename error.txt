@@ -1,0 +1,14 @@
+Attaching to app-1, db-1
+db-1  | 
+db-1  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+db-1  | 
+app-1  | Waiting for database...
+app-1  | Database available!
+app-1  | 
+app-1  | 0 static files copied to '/vol/web/static', 127 unmodified.
+app-1  | Operations to perform:
+app-1  |   Apply all migrations: admin, auth, contenttypes, sessions
+app-1  | Running migrations:
+app-1  |   No migrations to apply.
+Gracefully Stopping... press Ctrl+C again to force
+[K Container short-skirt-long-jacket-app-1  [32mStopping[0m
