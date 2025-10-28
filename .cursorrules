@@ -8,10 +8,10 @@
 - Always offer the alternatives before making changes. 
 - Include the (recommended) approach in the list.
 - Remember of creating log entries when appliable.
-- When creating a file that will be runned via docker, check if the file is in WORKDIR directory.
+- When creating a file that will be used via docker, check if the file is in WORKDIR directory.
 - When in need of an example for tests purposing:
     - PL 4381/2023 is an existing proposition, with sf_id `8797561` and cd_id `2386490`.
-- When trying to test somethin inside django prefer to use the following syntax without escaping the slashes and counterslashes:
+- When trying to test something inside django prefer to use the following syntax without escaping the slashes and counterslashes:
 ```
 docker compose run --rm app python manage.py shell -c string_containing_script
 ```
