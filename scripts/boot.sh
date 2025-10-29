@@ -63,8 +63,16 @@ fi
 echo "Running post-startup commands..."
 docker compose run --rm app sh -c "python manage.py createsuperuser --noinput"
 
-echo "Opening application in browser."
-xdg-open "http://localhost:8000" 2>/dev/null || open "http://localhost:8000" 2>/dev/null || echo "Please open http://localhost:8000 in your browser"
+echo "Running migrations..."
+docker compose run --rm app sh -c "python manage.py migrate"
+
+echo "Collecting static files..."
+docker compose run --rm app sh -c "python manage.py collectstatic --noinput"
+
+echo "Importing IBGE data..."
+docker compose run --rm app sh -c "python manage.py import_ibge_data"
 
 echo "Finished booting up the application."
 
+echo "Opening application in browser."
+xdg-open "http://localhost:8000" 2>/dev/null || open "http://localhost:8000" 2>/dev/null || echo "Please open http://localhost:8000 in your browser"
