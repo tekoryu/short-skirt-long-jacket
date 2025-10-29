@@ -4,14 +4,14 @@ from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.auth.mixins import ViewPermissionMixin, DownloadPermissionMixin, EditPermissionMixin
 from apps.auth.decorators import view_permission_required, download_permission_required, edit_permission_required
-from .models import City
+from .models import Municipality
 
 
 class CityListView(LoginRequiredMixin, ViewPermissionMixin, ListView):
     """
     List view for cities with view permission check.
     """
-    model = City
+    model = Municipality
     template_name = 'cities/city_list.html'
     context_object_name = 'cities'
     resource_name = 'cities.city'
@@ -90,7 +90,7 @@ def city_api(request):
     if not has_view_permission:
         return JsonResponse({'error': 'Permission denied'}, status=403)
     
-    cities = City.objects.all()[:10]  # Limit for demo
+    cities = Municipality.objects.all()[:10]  # Limit for demo
     data = {
         'cities': [
             {
