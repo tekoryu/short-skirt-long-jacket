@@ -15,8 +15,12 @@ EXPOSE 8000
 
 # Install system dependencies
 ARG DEV=false
-RUN export HTTP_PROXY=http://10.1.101.101:8080 && \
-    export HTTPS_PROXY=http://10.1.101.101:8080 && \
+ARG USE_PROXY=false
+ARG HTTP_PROXY_URL=http://10.1.101.101:8080
+RUN if [ "$USE_PROXY" = "true" ]; then \
+        export HTTP_PROXY=$HTTP_PROXY_URL && \
+        export HTTPS_PROXY=$HTTP_PROXY_URL; \
+    fi && \
     python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client jpeg-dev dos2unix && \
@@ -34,6 +38,7 @@ RUN export HTTP_PROXY=http://10.1.101.101:8080 && \
         django-user && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/logs && \
     chown -R django-user:django-user /vol && \
     chown -R django-user:django-user /app && \
     chmod -R 755 /vol && \

@@ -2,12 +2,8 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import models
-from functools import wraps
 from .models import UserPermission, GroupPermission, UserGroup, PermissionLog
 import logging
 
@@ -65,54 +61,67 @@ class PermissionRequiredMixin:
         )
         
         if active_user_perms.exists():
-            self.log_permission_access(resource_name, permission_type, True)
+            # Don't log successful accesses to prevent database bloat
+            # Only log in application-level logging if needed
+            logger.debug(f"User {user.email} accessed {resource_name} with {permission_type}")
             return True
-        
+
         # Check group permissions
         user_groups = UserGroup.objects.filter(
             user=user,
             is_active=True
         ).values_list('group', flat=True)
-        
+
         group_perms = GroupPermission.objects.filter(
             group__in=user_groups,
             resource_permission__resource_name=resource_name,
             resource_permission__permission_type=permission_type
         )
-        
+
         if group_perms.exists():
-            self.log_permission_access(resource_name, permission_type, True)
+            # Don't log successful accesses to prevent database bloat
+            logger.debug(f"User {user.email} accessed {resource_name} with {permission_type} via group")
             return True
-        
+
+        # Only log access denials to the database for security auditing
         self.log_permission_access(resource_name, permission_type, False)
         return False
     
     def log_permission_access(self, resource_name, permission_type, granted):
         """
-        Log permission access attempts.
+        Log permission access denials to the database.
+        Note: Only denials are logged to prevent database bloat.
+        Successful accesses are logged via application logging (logger.debug).
         """
         try:
-            PermissionLog.objects.create(
-                user=self.request.user,
-                action='access_denied' if not granted else 'granted',
-                resource=f"{resource_name}.{permission_type}",
-                details=f"Access {'granted' if granted else 'denied'} for {resource_name}",
-                ip_address=self.get_client_ip(),
-                user_agent=self.request.META.get('HTTP_USER_AGENT', '')
-            )
+            if not granted:
+                PermissionLog.objects.create(
+                    user=self.request.user,
+                    action='access_denied',
+                    resource=f"{resource_name}.{permission_type}",
+                    details=f"Access denied for {resource_name}",
+                    ip_address=self.get_client_ip(),
+                    user_agent=self.request.META.get('HTTP_USER_AGENT', '')
+                )
         except Exception as e:
-            logger.error(f"Failed to log permission access: {e}")
+            logger.error(f"Failed to log permission denial: {e}")
     
     def get_client_ip(self):
         """
         Get client IP address from request.
+        Safely handles X-Forwarded-For header to prevent IP spoofing.
         """
         x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = self.request.META.get('REMOTE_ADDR')
-        return ip
+            # Get the rightmost IP that isn't a loopback or private IP
+            # This prevents users from spoofing their IP via X-Forwarded-For
+            ips = [ip.strip() for ip in x_forwarded_for.split(',')]
+            # Take the last IP before hitting our reverse proxy
+            # In production, you may want to configure trusted proxies
+            for ip in reversed(ips):
+                if ip and not ip.startswith(('127.', '10.', '172.16.', '192.168.')):
+                    return ip
+        return self.request.META.get('REMOTE_ADDR', '0.0.0.0')
     
     def handle_no_permission(self):
         if self.raise_exception:

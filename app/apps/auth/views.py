@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils import timezone
 from django.db import models
+from django_ratelimit.decorators import ratelimit
 from .models import (
     User, PermissionGroup, ResourcePermission, UserPermission,
     GroupPermission, UserGroup, PermissionLog
@@ -20,13 +21,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@ratelimit(key='ip', rate='5/5m', method='POST', block=True)
 def login_view(request):
     """
     Custom login view with permission logging.
+    Rate limited to 5 attempts per 5 minutes per IP to prevent brute force attacks.
     """
     if request.user.is_authenticated:
         return redirect('core:main')
-    
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -72,13 +75,15 @@ def logout_view(request):
     return redirect('auth:login')
 
 
+@ratelimit(key='ip', rate='3/1h', method='POST', block=True)
 def register_view(request):
     """
     User registration view.
+    Rate limited to 3 registrations per hour per IP to prevent spam.
     """
     if request.user.is_authenticated:
         return redirect('core:main')
-    
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -348,10 +353,16 @@ def check_permission_api(request):
 def get_client_ip(request):
     """
     Get client IP address from request.
+    Safely handles X-Forwarded-For header to prevent IP spoofing.
     """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        # Get the rightmost IP that isn't a loopback or private IP
+        # This prevents users from spoofing their IP via X-Forwarded-For
+        ips = [ip.strip() for ip in x_forwarded_for.split(',')]
+        # Take the last IP before hitting our reverse proxy
+        # In production, you may want to configure trusted proxies
+        for ip in reversed(ips):
+            if ip and not ip.startswith(('127.', '10.', '172.16.', '192.168.')):
+                return ip
+    return request.META.get('REMOTE_ADDR', '0.0.0.0')

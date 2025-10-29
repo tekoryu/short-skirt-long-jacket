@@ -23,21 +23,24 @@ def download_cities(request):
     """
     Download cities data - requires download permission.
     """
-    cities = City.objects.all()
-    
+    cities = Municipality.objects.select_related(
+        'immediate_region__intermediate_region__state'
+    ).all()
+
     # In a real implementation, you would generate a file (CSV, Excel, etc.)
     # For this example, we'll return JSON
     data = {
         'cities': [
             {
+                'code': city.code,
                 'name': city.name,
-                'state': city.state,
-                'population': city.population
+                'state': city.immediate_region.intermediate_region.state.name,
+                'state_code': city.immediate_region.intermediate_region.state.code
             }
             for city in cities
         ]
     }
-    
+
     return JsonResponse(data)
 
 
@@ -89,18 +92,22 @@ def city_api(request):
     
     if not has_view_permission:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    
-    cities = Municipality.objects.all()[:10]  # Limit for demo
+
+    cities = Municipality.objects.select_related(
+        'immediate_region__intermediate_region__state'
+    ).all()[:10]  # Limit for demo
     data = {
         'cities': [
             {
                 'id': city.id,
+                'code': city.code,
                 'name': city.name,
-                'state': city.state,
-                'population': city.population
+                'state': city.immediate_region.intermediate_region.state.name,
+                'state_code': city.immediate_region.intermediate_region.state.code,
+                'region': city.immediate_region.name
             }
             for city in cities
         ]
     }
-    
+
     return JsonResponse(data)
