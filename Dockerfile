@@ -19,7 +19,9 @@ ARG USE_PROXY=false
 ARG HTTP_PROXY_URL=http://10.1.101.101:8080
 RUN if [ "$USE_PROXY" = "true" ]; then \
         export HTTP_PROXY=$HTTP_PROXY_URL && \
-        export HTTPS_PROXY=$HTTP_PROXY_URL; \
+        export HTTPS_PROXY=$HTTP_PROXY_URL && \
+        export http_proxy=$HTTP_PROXY_URL && \
+        export https_proxy=$HTTP_PROXY_URL; \
     fi && \
     python -m venv /py && \
     /py/bin/pip install --upgrade pip && \

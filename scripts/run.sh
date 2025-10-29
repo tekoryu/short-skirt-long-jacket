@@ -12,7 +12,7 @@ if [ "$DEBUG" = "True" ]; then
 else
     echo "Starting production server with Gunicorn..."
     gunicorn --bind 0.0.0.0:8000 \
-        --workers 4 \
+        --workers $(($(nproc) + 1)) \
         --timeout 60 \
         --worker-class sync \
         --max-requests 1000 \
