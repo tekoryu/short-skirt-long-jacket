@@ -29,6 +29,7 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
+      - ./app/logs:/vol/web/logs
       - static_volume:/vol/web/static
       - media_volume:/vol/web/media  
     environment:

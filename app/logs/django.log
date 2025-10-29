@@ -1,0 +1,5 @@
+WARNING 2025-10-29 19:20:57,221 <string> 1 140001305004808 Django warning
+ERROR 2025-10-29 19:20:57,221 <string> 1 140001305004808 Django error
+WARNING 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Django WARNING - should appear in console and file
+ERROR 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Django ERROR - should appear in console and file
+ERROR 2025-10-29 19:26:31,295 <string> 1 140228170222344 TEST: Request ERROR - simulated 404 or 500 error

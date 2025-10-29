@@ -5,6 +5,10 @@ class State(models.Model):
     """Brazilian state model"""
     code = models.CharField(max_length=2, unique=True, verbose_name="State Code")
     name = models.CharField(max_length=100, verbose_name="State Name")
+    abbreviation = models.CharField(max_length=2, unique=True, null=True, blank=True, verbose_name="State Abbreviation")
+    latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
+    regiao = models.CharField(max_length=50, null=True, blank=True, verbose_name="Região")
     
     class Meta:
         verbose_name = "State"
@@ -12,7 +16,7 @@ class State(models.Model):
         ordering = ['name']
     
     def __str__(self):
-        return f"{self.name} ({self.code})"
+        return f"{self.name} ({self.abbreviation})"
 
 
 class IntermediateRegion(models.Model):
@@ -49,6 +53,12 @@ class Municipality(models.Model):
     """Brazilian municipality model"""
     code = models.CharField(max_length=7, unique=True, verbose_name="Municipality Code")
     name = models.CharField(max_length=200, verbose_name="Municipality Name")
+    latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
+    is_capital = models.BooleanField(default=False, verbose_name="Is Capital")
+    siafi_id = models.CharField(max_length=4, null=True, blank=True, verbose_name="SIAFI ID")
+    area_code = models.CharField(max_length=3, null=True, blank=True, verbose_name="Area Code (DDD)")
+    timezone = models.CharField(max_length=50, null=True, blank=True, verbose_name="Timezone")
     immediate_region = models.ForeignKey(ImmediateRegion, on_delete=models.CASCADE, related_name='municipalities')
     
     class Meta:
