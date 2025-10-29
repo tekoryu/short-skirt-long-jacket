@@ -35,3 +35,4 @@ docker compose run --rm app python manage.py runserver 0.0.0.0:8000
 The project includes custom CSS and JavaScript for the main page:
 - `apps/core/static/core/css/main.css` - Main stylesheet
 - `apps/core/static/core/js/main.js` - Interactive functionality
+

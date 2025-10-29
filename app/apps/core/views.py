@@ -11,3 +11,4 @@ def main_page(request):
 def settings(request):
     """Settings page view"""
     return render(request, 'core/settings.html')
+

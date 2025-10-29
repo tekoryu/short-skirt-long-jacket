@@ -179,3 +179,4 @@ class PermissionSearchForm(forms.Form):
         initial=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+

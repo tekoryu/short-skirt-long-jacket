@@ -9,3 +9,4 @@ urlpatterns = [
     path('edit/<int:city_id>/', views.edit_city, name='edit_city'),
     path('api/', views.city_api, name='city_api'),
 ]
+

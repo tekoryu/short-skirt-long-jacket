@@ -7,3 +7,4 @@ urlpatterns = [
     path('', views.main_page, name='main'),
     path('settings/', views.settings, name='settings'),
 ]
+

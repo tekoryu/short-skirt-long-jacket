@@ -72,3 +72,4 @@ def log_group_removal(sender, instance, **kwargs):
         resource=instance.group.name,
         details=f"Removed from group"
     )
+

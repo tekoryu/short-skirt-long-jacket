@@ -203,3 +203,4 @@ GroupPermission.objects.create(
 3. **Principle of Least Privilege**: Grant only necessary permissions
 4. **Time-based Access**: Use expiration dates for temporary access
 5. **Resource Naming**: Use consistent naming for resources (app.model format)
+

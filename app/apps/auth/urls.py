@@ -20,3 +20,4 @@ urlpatterns = [
     # API URLs
     path('api/check-permission/', views.check_permission_api, name='check_permission_api'),
 ]
+
