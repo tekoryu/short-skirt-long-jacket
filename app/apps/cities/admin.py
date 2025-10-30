@@ -1,12 +1,23 @@
 from django.contrib import admin
-from .models import State, IntermediateRegion, ImmediateRegion, Municipality
+from .models import Region, State, IntermediateRegion, ImmediateRegion, Municipality
+
+
+@admin.register(Region)
+class RegionAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'state_count']
+    search_fields = ['code', 'name']
+    ordering = ['name']
+    
+    def state_count(self, obj):
+        return obj.states.count()
+    state_count.short_description = 'Number of States'
 
 
 @admin.register(State)
 class StateAdmin(admin.ModelAdmin):
-    list_display = ['code', 'abbreviation', 'name', 'regiao', 'latitude', 'longitude']
-    search_fields = ['code', 'abbreviation', 'name', 'regiao']
-    list_filter = ['regiao']
+    list_display = ['code', 'abbreviation', 'name', 'region', 'latitude', 'longitude']
+    search_fields = ['code', 'abbreviation', 'name', 'region__name']
+    list_filter = ['region']
     ordering = ['name']
 
 

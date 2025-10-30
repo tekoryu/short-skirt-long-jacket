@@ -1,6 +1,20 @@
 from django.db import models
 
 
+class Region(models.Model):
+    """Brazilian geographic macro-region"""
+    code = models.CharField(max_length=2, unique=True, verbose_name="Region Code")
+    name = models.CharField(max_length=50, unique=True, verbose_name="Region Name")
+    
+    class Meta:
+        verbose_name = "Region"
+        verbose_name_plural = "Regions"
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+
+
 class State(models.Model):
     """Brazilian state model"""
     code = models.CharField(max_length=2, unique=True, verbose_name="State Code")
@@ -8,7 +22,8 @@ class State(models.Model):
     abbreviation = models.CharField(max_length=2, unique=True, null=True, blank=True, verbose_name="State Abbreviation")
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
-    regiao = models.CharField(max_length=50, null=True, blank=True, verbose_name="Região")
+    region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='states', null=True, blank=True, verbose_name="Region")
+    regiao = models.CharField(max_length=50, null=True, blank=True, verbose_name="Região (deprecated)")
     
     class Meta:
         verbose_name = "State"

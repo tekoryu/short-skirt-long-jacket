@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
-from apps.cities.models import State
+from apps.cities.models import Region, State
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,34 @@ class Command(BaseCommand):
             self.style.SUCCESS(f'Deleted {states_deleted} states')
         )
     
+    def get_or_create_region(self, region_name, dry_run):
+        """Get or create a region by name"""
+        if dry_run:
+            try:
+                return Region.objects.get(name=region_name)
+            except Region.DoesNotExist:
+                return None
+        
+        # Map region names to codes
+        region_codes = {
+            'Norte': 'N',
+            'Nordeste': 'NE',
+            'Sudeste': 'SE',
+            'Sul': 'S',
+            'Centro-Oeste': 'CO'
+        }
+        
+        region_code = region_codes.get(region_name, region_name[:2].upper())
+        region, created = Region.objects.get_or_create(
+            name=region_name,
+            defaults={'code': region_code}
+        )
+        
+        if created:
+            self.stdout.write(f'Created region: {region_name} ({region_code})')
+        
+        return region
+    
     def import_data(self, file_path, dry_run):
         """Import data from estados.csv file"""
         states_created = 0
@@ -99,7 +127,12 @@ class Command(BaseCommand):
                         nome = row['nome'].strip()
                         latitude = Decimal(row['latitude'].strip()) if row['latitude'].strip() else None
                         longitude = Decimal(row['longitude'].strip()) if row['longitude'].strip() else None
-                        regiao = row['regiao'].strip() if row['regiao'].strip() else None
+                        regiao_name = row['regiao'].strip() if row['regiao'].strip() else None
+                        
+                        # Get or create region
+                        region = None
+                        if regiao_name:
+                            region = self.get_or_create_region(regiao_name, dry_run)
                         
                         if not dry_run:
                             # Find existing state by numeric code
@@ -109,10 +142,11 @@ class Command(BaseCommand):
                                 state.abbreviation = uf
                                 state.latitude = latitude
                                 state.longitude = longitude
-                                state.regiao = regiao
+                                state.regiao = regiao_name
+                                state.region = region
                                 state.save()
                                 states_created += 1
-                                self.stdout.write(f'Updated state: {nome} ({uf}) - {regiao}')
+                                self.stdout.write(f'Updated state: {nome} ({uf}) - {regiao_name}')
                             except State.DoesNotExist:
                                 self.stdout.write(f'State with code {codigo_uf} not found, skipping {nome}')
                         else:
@@ -120,7 +154,7 @@ class Command(BaseCommand):
                             try:
                                 state = State.objects.get(code=codigo_uf)
                                 states_created += 1
-                                self.stdout.write(f'Would update state: {nome} ({uf}) - {regiao}')
+                                self.stdout.write(f'Would update state: {nome} ({uf}) - {regiao_name}')
                             except State.DoesNotExist:
                                 self.stdout.write(f'State with code {codigo_uf} not found, would skip {nome}')
                     
