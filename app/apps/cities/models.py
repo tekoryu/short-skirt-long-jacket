@@ -76,6 +76,14 @@ class Municipality(models.Model):
     timezone = models.CharField(max_length=50, null=True, blank=True, verbose_name="Timezone")
     immediate_region = models.ForeignKey(ImmediateRegion, on_delete=models.CASCADE, related_name='municipalities')
     
+    # Mayor information
+    mayor_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mayor Name")
+    mayor_party = models.CharField(max_length=50, null=True, blank=True, verbose_name="Mayor Party")
+    mayor_mandate_start = models.IntegerField(null=True, blank=True, verbose_name="Mandate Start Year")
+    mayor_mandate_end = models.IntegerField(null=True, blank=True, verbose_name="Mandate End Year")
+    wikipedia_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="Wikipedia URL")
+    mayor_data_updated_at = models.DateTimeField(null=True, blank=True, verbose_name="Mayor Data Updated At")
+    
     class Meta:
         verbose_name = "Municipality"
         verbose_name_plural = "Municipalities"

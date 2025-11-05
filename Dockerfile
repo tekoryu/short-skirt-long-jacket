@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Set work directory
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements-dev.txt /tmp/requirements-dev.txt
 COPY ./scripts /scripts
 COPY ./app /app
 COPY ./data /data

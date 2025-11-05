@@ -43,12 +43,31 @@ class ImmediateRegionAdmin(admin.ModelAdmin):
 
 @admin.register(Municipality)
 class MunicipalityAdmin(admin.ModelAdmin):
-    list_display = ['code', 'name', 'is_capital', 'latitude', 'longitude', 'area_code', 'timezone', 'immediate_region', 'state_name']
-    list_filter = ['is_capital', 'immediate_region__intermediate_region__state', 'timezone']
-    search_fields = ['code', 'name', 'siafi_id', 'area_code', 'immediate_region__name']
+    list_display = ['code', 'name', 'is_capital', 'mayor_name', 'mayor_party', 'mayor_mandate_period', 'state_name']
+    list_filter = ['is_capital', 'immediate_region__intermediate_region__state', 'timezone', 'mayor_party']
+    search_fields = ['code', 'name', 'siafi_id', 'area_code', 'immediate_region__name', 'mayor_name', 'mayor_party']
     ordering = ['name']
     list_editable = ['is_capital']
+    readonly_fields = ['mayor_data_updated_at']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('code', 'name', 'is_capital', 'siafi_id', 'immediate_region')
+        }),
+        ('Location', {
+            'fields': ('latitude', 'longitude', 'area_code', 'timezone')
+        }),
+        ('Mayor Information', {
+            'fields': ('mayor_name', 'mayor_party', 'mayor_mandate_start', 'mayor_mandate_end', 'wikipedia_url', 'mayor_data_updated_at')
+        }),
+    )
     
     def state_name(self, obj):
         return obj.immediate_region.intermediate_region.state.name
     state_name.short_description = 'State'
+    
+    def mayor_mandate_period(self, obj):
+        if obj.mayor_mandate_start and obj.mayor_mandate_end:
+            return f"{obj.mayor_mandate_start}-{obj.mayor_mandate_end}"
+        return "-"
+    mayor_mandate_period.short_description = 'Mandate Period'
