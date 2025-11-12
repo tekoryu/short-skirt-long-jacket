@@ -43,8 +43,8 @@ class ImmediateRegionAdmin(admin.ModelAdmin):
 
 @admin.register(Municipality)
 class MunicipalityAdmin(admin.ModelAdmin):
-    list_display = ['code', 'name', 'is_capital', 'mayor_name', 'mayor_party', 'mayor_mandate_period', 'state_name']
-    list_filter = ['is_capital', 'immediate_region__intermediate_region__state', 'timezone', 'mayor_party']
+    list_display = ['code', 'name', 'is_capital', 'seaf_category', 'mayor_name', 'mayor_party', 'mayor_mandate_period', 'state_name']
+    list_filter = ['is_capital', 'seaf_category', 'immediate_region__intermediate_region__state', 'timezone', 'mayor_party']
     search_fields = ['code', 'name', 'siafi_id', 'area_code', 'immediate_region__name', 'mayor_name', 'mayor_party']
     ordering = ['name']
     list_editable = ['is_capital']
@@ -52,7 +52,7 @@ class MunicipalityAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('code', 'name', 'is_capital', 'siafi_id', 'immediate_region')
+            'fields': ('code', 'name', 'is_capital', 'siafi_id', 'immediate_region', 'seaf_category')
         }),
         ('Location', {
             'fields': ('latitude', 'longitude', 'area_code', 'timezone')
