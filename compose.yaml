@@ -46,6 +46,12 @@ services:
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      # proxy settings
+      - HTTP_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - HTTPS_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - http_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - https_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - NO_PROXY=localhost,127.0.0.1,db
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s

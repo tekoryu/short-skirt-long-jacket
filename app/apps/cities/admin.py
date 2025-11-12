@@ -48,7 +48,7 @@ class MunicipalityAdmin(admin.ModelAdmin):
     search_fields = ['code', 'name', 'siafi_id', 'area_code', 'immediate_region__name', 'mayor_name', 'mayor_party']
     ordering = ['name']
     list_editable = ['is_capital']
-    readonly_fields = ['mayor_data_updated_at']
+    readonly_fields = ['mayor_data_updated_at', 'wiki_data_updated_at']
     
     fieldsets = (
         ('Basic Information', {
@@ -59,6 +59,26 @@ class MunicipalityAdmin(admin.ModelAdmin):
         }),
         ('Mayor Information', {
             'fields': ('mayor_name', 'mayor_party', 'mayor_mandate_start', 'mayor_mandate_end', 'wikipedia_url', 'mayor_data_updated_at')
+        }),
+        ('Wikipedia - Basic Data', {
+            'fields': ('wiki_demonym', 'wiki_climate', 'wiki_altitude', 'wiki_total_area', 'wiki_population', 'wiki_density'),
+            'classes': ('collapse',)
+        }),
+        ('Wikipedia - Geographic Data', {
+            'fields': ('wiki_metropolitan_region', 'wiki_bordering_municipalities', 'wiki_distance_to_capital', 'wiki_foundation_date'),
+            'classes': ('collapse',)
+        }),
+        ('Wikipedia - Economic & Social Data', {
+            'fields': ('wiki_idh', 'wiki_gini', 'wiki_gdp', 'wiki_gdp_per_capita'),
+            'classes': ('collapse',)
+        }),
+        ('Wikipedia - Mayor Information', {
+            'fields': ('wiki_mayor_name', 'wiki_mayor_party', 'wiki_mayor_mandate_start', 'wiki_mayor_mandate_end'),
+            'classes': ('collapse',)
+        }),
+        ('Wikipedia - Other', {
+            'fields': ('wiki_council_members', 'wiki_postal_code', 'wiki_website', 'wiki_data_updated_at'),
+            'classes': ('collapse',)
         }),
     )
     

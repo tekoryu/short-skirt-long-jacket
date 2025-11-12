@@ -4,7 +4,7 @@
 - Avoid unnecessary explanations.
 - Prioritize technical details over generic advice.
 - When creating new models, use drf-spectacular when appropriate and do not forget to register the model in django admin.
-- Never create README files or documentation if not asked to do it. Comments are allowed.
+- Never create README files or documentation if not asked to do it.
 - Always offer the alternatives before making changes. 
 - Include the (recommended) approach in the list.
 - Remember of creating log entries when appliable.
@@ -19,3 +19,4 @@ docker compose run --rm app python manage.py shell -c string_containing_script
 - Everything related to frontend tech shall be explained. Presume that I am a backend software engineer.
 - Frontend tests shall use hot reload
 - Alert me if I am doing something that violates the good principles of software engineering.
+- When crating comments to the code, always starts with something like "This class is responsible for ..."

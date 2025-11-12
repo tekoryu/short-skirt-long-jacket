@@ -84,6 +84,30 @@ class Municipality(models.Model):
     wikipedia_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="Wikipedia URL")
     mayor_data_updated_at = models.DateTimeField(null=True, blank=True, verbose_name="Mayor Data Updated At")
     
+    # Wikipedia infobox data
+    wiki_demonym = models.CharField(max_length=100, null=True, blank=True, verbose_name="Demonym (Wikipedia)")
+    wiki_altitude = models.CharField(max_length=100, null=True, blank=True, verbose_name="Altitude (Wikipedia)")
+    wiki_total_area = models.CharField(max_length=100, null=True, blank=True, verbose_name="Total Area (Wikipedia)")
+    wiki_population = models.CharField(max_length=100, null=True, blank=True, verbose_name="Population (Wikipedia)")
+    wiki_density = models.CharField(max_length=100, null=True, blank=True, verbose_name="Density (Wikipedia)")
+    wiki_climate = models.CharField(max_length=200, null=True, blank=True, verbose_name="Climate (Wikipedia)")
+    wiki_idh = models.CharField(max_length=100, null=True, blank=True, verbose_name="IDH (Wikipedia)")
+    wiki_gdp = models.CharField(max_length=100, null=True, blank=True, verbose_name="GDP (Wikipedia)")
+    wiki_gdp_per_capita = models.CharField(max_length=100, null=True, blank=True, verbose_name="GDP Per Capita (Wikipedia)")
+    wiki_website = models.CharField(max_length=500, null=True, blank=True, verbose_name="Website (Wikipedia)")
+    wiki_metropolitan_region = models.CharField(max_length=200, null=True, blank=True, verbose_name="Metropolitan Region (Wikipedia)")
+    wiki_bordering_municipalities = models.TextField(null=True, blank=True, verbose_name="Bordering Municipalities (Wikipedia)")
+    wiki_distance_to_capital = models.CharField(max_length=100, null=True, blank=True, verbose_name="Distance to Capital (Wikipedia)")
+    wiki_foundation_date = models.CharField(max_length=200, null=True, blank=True, verbose_name="Foundation Date (Wikipedia)")
+    wiki_council_members = models.CharField(max_length=50, null=True, blank=True, verbose_name="Council Members (Wikipedia)")
+    wiki_postal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name="Postal Code (Wikipedia)")
+    wiki_gini = models.CharField(max_length=100, null=True, blank=True, verbose_name="Gini Coefficient (Wikipedia)")
+    wiki_mayor_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mayor Name (Wikipedia)")
+    wiki_mayor_party = models.CharField(max_length=50, null=True, blank=True, verbose_name="Mayor Party (Wikipedia)")
+    wiki_mayor_mandate_start = models.IntegerField(null=True, blank=True, verbose_name="Mayor Mandate Start (Wikipedia)")
+    wiki_mayor_mandate_end = models.IntegerField(null=True, blank=True, verbose_name="Mayor Mandate End (Wikipedia)")
+    wiki_data_updated_at = models.DateTimeField(null=True, blank=True, verbose_name="Wikipedia Data Updated At")
+    
     class Meta:
         verbose_name = "Municipality"
         verbose_name_plural = "Municipalities"
