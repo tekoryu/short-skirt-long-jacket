@@ -15,8 +15,8 @@
     <div class="welcome-icon">
         <i class="fas fa-city fa-3x"></i>
     </div>
-    <h2>Welcome to Short Skirt Long Jacket</h2>
-    <p>A sophisticated Brazilian municipalities data platform</p>
+    <h2>Bem-vindo ao Short Skirt Long Jacket</h2>
+    <p>Uma plataforma sofisticada de dados de municípios brasileiros</p>
 </div>
 
 <!-- Stats Cards -->
@@ -27,7 +27,7 @@
         </div>
         <div class="stats-content">
             <h3 x-text="count">0</h3>
-            <p>Municipalities</p>
+            <p>Municípios</p>
         </div>
     </div>
     
@@ -37,7 +37,7 @@
         </div>
         <div class="stats-content">
             <h3 x-text="count">0</h3>
-            <p>States</p>
+            <p>Estados</p>
         </div>
     </div>
     
@@ -47,7 +47,7 @@
         </div>
         <div class="stats-content">
             <h3 x-text="count">0</h3>
-            <p>Regions</p>
+            <p>Regiões</p>
         </div>
     </div>
     
@@ -57,14 +57,14 @@
         </div>
         <div class="stats-content">
             <h3 x-text="count + '%'">0%</h3>
-            <p>Data Coverage</p>
+            <p>Cobertura de Dados</p>
         </div>
     </div>
 </div>
 
 <!-- Quick Actions -->
 <div class="quick-actions-section">
-    <h3>Quick Actions</h3>
+    <h3>Ações Rápidas</h3>
     <div class="quick-actions-grid" x-data="{ hoveredCard: null }">
         <a
             href="{% url 'cities:city_list' %}"
@@ -74,7 +74,7 @@
             :class="{ 'hovered': hoveredCard === 'cities' }"
         >
             <i class="fas fa-list"></i>
-            <span>View Cities</span>
+            <span>Ver Cidades</span>
         </a>
         
         <a
@@ -85,7 +85,7 @@
             :class="{ 'hovered': hoveredCard === 'admin' }"
         >
             <i class="fas fa-tools"></i>
-            <span>Admin Panel</span>
+            <span>Painel Admin</span>
         </a>
         
         <a
@@ -96,7 +96,7 @@
             :class="{ 'hovered': hoveredCard === 'settings' }"
         >
             <i class="fas fa-cog"></i>
-            <span>Settings</span>
+            <span>Configurações</span>
         </a>
         
         <button
@@ -104,26 +104,26 @@
             @mouseenter="hoveredCard = 'export'"
             @mouseleave="hoveredCard = null"
             :class="{ 'hovered': hoveredCard === 'export' }"
-            @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Export feature coming soon!', type: 'info' } }))"
+            @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Recurso de exportação em breve!', type: 'info' } }))"
         >
             <i class="fas fa-download"></i>
-            <span>Export Data</span>
+            <span>Exportar Dados</span>
         </button>
     </div>
 </div>
 
 <!-- Recent Activity -->
 <div class="activity-section">
-    <h3>Recent Activity</h3>
+    <h3>Atividade Recente</h3>
     <div class="activity-list">
         <div class="activity-item">
             <div class="activity-icon" style="background: linear-gradient(135deg, #0CABA8, #008F8C);">
                 <i class="fas fa-database"></i>
             </div>
             <div class="activity-content">
-                <strong>Data Updated</strong>
-                <p style="color: var(--text-secondary); margin: 0;">Municipality data synchronized</p>
-                <small style="color: var(--text-secondary);">Recently</small>
+                <strong>Dados Atualizados</strong>
+                <p style="color: var(--text-secondary); margin: 0;">Dados dos municípios sincronizados</p>
+                <small style="color: var(--text-secondary);">Recentemente</small>
             </div>
         </div>
         
@@ -132,9 +132,9 @@
                 <i class="fas fa-map"></i>
             </div>
             <div class="activity-content">
-                <strong>System Ready</strong>
-                <p style="color: var(--text-secondary); margin: 0;">All systems operational</p>
-                <small style="color: var(--text-secondary);">Active</small>
+                <strong>Sistema Pronto</strong>
+                <p style="color: var(--text-secondary); margin: 0;">Todos os sistemas operacionais</p>
+                <small style="color: var(--text-secondary);">Ativo</small>
             </div>
         </div>
     </div>

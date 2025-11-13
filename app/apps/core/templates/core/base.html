@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,17 +18,19 @@
 <body x-data="{ darkMode: false }" :class="{ 'dark-mode': darkMode }">
     <div class="top-bar" x-data="{ userMenuOpen: false }">
         <div class="top-bar-left">
-            <h1 class="project-title">
-                <i class="fas fa-city"></i>
-                Short Skirt Long Jacket
-            </h1>
+            <a href="{% url 'core:main' %}" class="project-title-link">
+                <h1 class="project-title">
+                    <i class="fas fa-city"></i>
+                    Short Skirt Long Jacket
+                </h1>
+            </a>
         </div>
         <div class="top-bar-right">
             <!-- Dark Mode Toggle -->
             <button 
                 @click="darkMode = !darkMode" 
                 class="theme-toggle"
-                :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+                :aria-label="darkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
             >
                 <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
             </button>
@@ -58,7 +60,7 @@
                 >
                     <a href="{% url 'core:settings' %}" class="user-menu-item">
                         <i class="fas fa-cog"></i>
-                        <span>Settings</span>
+                        <span>Configurações</span>
                     </a>
                     <a href="{% url 'admin:index' %}" class="user-menu-item">
                         <i class="fas fa-tools"></i>

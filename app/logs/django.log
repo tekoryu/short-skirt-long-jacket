@@ -10,3 +10,17 @@ WARNING 2025-11-12 21:38:49,982 basehttp 187 139949416815416 "GET /favicon.ico H
 WARNING 2025-11-13 19:29:20,107 basehttp 23 140460672805688 "GET /favicon.ico HTTP/1.1" 404 3182
 WARNING 2025-11-13 20:25:49,706 basehttp 23 140460672805688 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-13 20:32:36,565 basehttp 11 139656055659320 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:53:13,136 basehttp 11 139917469723448 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:03,887 basehttp 11 139917469723448 "GET /cities/ HTTP/1.1" 403 135
+WARNING 2025-11-13 20:54:03,914 basehttp 11 139917469723448 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:06,560 basehttp 11 139917469723448 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:06,578 basehttp 11 139917469723448 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:49,887 basehttp 11 139917469723448 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:51,625 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:51,641 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:54:58,932 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:55:00,343 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:55:00,358 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:55:04,413 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:55:06,278 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-13 20:55:07,720 basehttp 11 139917468662584 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293

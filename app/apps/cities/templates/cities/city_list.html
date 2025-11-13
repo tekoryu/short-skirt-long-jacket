@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 
-{% block title %}Cities - Short Skirt Long Jacket{% endblock %}
+{% block title %}Cidades - Short Skirt Long Jacket{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -173,10 +173,10 @@
         <div>
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
                 <i class="fas fa-city" style="font-size: 2rem; color: var(--primary-color);"></i>
-                <h2 style="margin: 0;">Brazilian Municipalities</h2>
+                <h2 style="margin: 0;">Municípios Brasileiros</h2>
             </div>
             <p style="color: var(--text-secondary); margin: 0;">
-                Browse and manage municipality data from across Brazil
+                Navegue e gerencie dados de municípios de todo o Brasil
             </p>
         </div>
         
@@ -207,10 +207,10 @@
         <table class="cities-table">
             <thead>
                 <tr>
-                    <th><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Name</th>
-                    <th><i class="fas fa-flag" style="margin-right: 0.5rem; color: var(--teal-2);"></i>State</th>
-                    <th><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Population</th>
-                    <th style="text-align: center;"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Actions</th>
+                    <th><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Nome</th>
+                    <th><i class="fas fa-flag" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Estado</th>
+                    <th><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>População</th>
+                    <th style="text-align: center;"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -222,7 +222,7 @@
                     <td style="text-align: center;">
                         <a href="{% url 'cities:edit_city' city.id %}" class="btn-edit">
                             <i class="fas fa-edit"></i>
-                            <span>Edit</span>
+                            <span>Editar</span>
                         </a>
                     </td>
                 </tr>
@@ -232,8 +232,8 @@
     {% else %}
         <div class="empty-state">
             <i class="fas fa-city"></i>
-            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">No Cities Found</h3>
-            <p>There are no municipalities in the database yet.</p>
+            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Nenhuma Cidade Encontrada</h3>
+            <p>Ainda não há municípios no banco de dados.</p>
         </div>
     {% endif %}
 </div>
