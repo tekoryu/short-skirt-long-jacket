@@ -2,9 +2,142 @@
 {% load static %}
 
 {% block content %}
-<div class="welcome-section">
+<!-- Welcome Section with Alpine.js animations -->
+<div 
+    class="welcome-section"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 100)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div class="welcome-icon">
+        <i class="fas fa-city fa-3x"></i>
+    </div>
     <h2>Welcome to Short Skirt Long Jacket</h2>
-    <p>Your project dashboard is ready to go!</p>
+    <p>A sophisticated Brazilian municipalities data platform</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 13, 5570), 20)">
+        <div class="stats-icon">
+            <i class="fas fa-city"></i>
+        </div>
+        <div class="stats-content">
+            <h3 x-text="count">0</h3>
+            <p>Municipalities</p>
+        </div>
+    </div>
+    
+    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 27), 50)">
+        <div class="stats-icon">
+            <i class="fas fa-map-marked-alt"></i>
+        </div>
+        <div class="stats-content">
+            <h3 x-text="count">0</h3>
+            <p>States</p>
+        </div>
+    </div>
+    
+    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 5), 100)">
+        <div class="stats-icon">
+            <i class="fas fa-globe-americas"></i>
+        </div>
+        <div class="stats-content">
+            <h3 x-text="count">0</h3>
+            <p>Regions</p>
+        </div>
+    </div>
+    
+    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 5, 100), 30)">
+        <div class="stats-icon">
+            <i class="fas fa-database"></i>
+        </div>
+        <div class="stats-content">
+            <h3 x-text="count + '%'">0%</h3>
+            <p>Data Coverage</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions-section">
+    <h3>Quick Actions</h3>
+    <div class="quick-actions-grid" x-data="{ hoveredCard: null }">
+        <a
+            href="{% url 'cities:city_list' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'cities'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'cities' }"
+        >
+            <i class="fas fa-list"></i>
+            <span>View Cities</span>
+        </a>
+        
+        <a
+            href="{% url 'admin:index' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'admin'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'admin' }"
+        >
+            <i class="fas fa-tools"></i>
+            <span>Admin Panel</span>
+        </a>
+        
+        <a
+            href="{% url 'core:settings' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'settings'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'settings' }"
+        >
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        
+        <button
+            class="action-card"
+            @mouseenter="hoveredCard = 'export'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'export' }"
+            @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Export feature coming soon!', type: 'info' } }))"
+        >
+            <i class="fas fa-download"></i>
+            <span>Export Data</span>
+        </button>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="activity-section">
+    <h3>Recent Activity</h3>
+    <div class="activity-list">
+        <div class="activity-item">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #0CABA8, #008F8C);">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="activity-content">
+                <strong>Data Updated</strong>
+                <p style="color: var(--text-secondary); margin: 0;">Municipality data synchronized</p>
+                <small style="color: var(--text-secondary);">Recently</small>
+            </div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #0FC2C0, #0CABA8);">
+                <i class="fas fa-map"></i>
+            </div>
+            <div class="activity-content">
+                <strong>System Ready</strong>
+                <p style="color: var(--text-secondary); margin: 0;">All systems operational</p>
+                <small style="color: var(--text-secondary);">Active</small>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

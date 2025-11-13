@@ -4,9 +4,63 @@
 {% block title %}Settings - Short Skirt Long Jacket{% endblock %}
 
 {% block content %}
-<div class="settings-section">
-    <h2>Settings</h2>
-    <p>Configure your application settings here.</p>
+<div 
+    class="settings-section"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 100)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-cog" style="font-size: 2rem; color: var(--primary-color);"></i>
+        <h2 style="margin: 0;">Settings</h2>
+    </div>
+    
+    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+        Configure your application settings and preferences
+    </p>
+    
+    <!-- Settings Options Grid -->
+    <div class="quick-actions-grid" style="margin-bottom: 2rem;">
+        <div class="action-card" style="cursor: default;">
+            <i class="fas fa-palette"></i>
+            <span>Theme</span>
+            <small style="color: var(--text-secondary); font-size: 0.85rem;">Customize appearance</small>
+        </div>
+        
+        <div class="action-card" style="cursor: default;">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+            <small style="color: var(--text-secondary); font-size: 0.85rem;">Manage alerts</small>
+        </div>
+        
+        <div class="action-card" style="cursor: default;">
+            <i class="fas fa-shield-alt"></i>
+            <span>Security</span>
+            <small style="color: var(--text-secondary); font-size: 0.85rem;">Privacy settings</small>
+        </div>
+        
+        <div class="action-card" style="cursor: default;">
+            <i class="fas fa-database"></i>
+            <span>Data</span>
+            <small style="color: var(--text-secondary); font-size: 0.85rem;">Import & Export</small>
+        </div>
+    </div>
+    
+    <!-- Info Message -->
+    <div style="background: rgba(12, 171, 168, 0.05); border-left: 4px solid var(--teal-2); padding: 1.25rem; border-radius: 8px;">
+        <div style="display: flex; align-items: start; gap: 1rem;">
+            <i class="fas fa-info-circle" style="color: var(--teal-2); font-size: 1.25rem; margin-top: 0.125rem;"></i>
+            <div>
+                <strong style="color: var(--text-primary);">Settings Configuration</strong>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">
+                    Configure your application settings through the Django admin panel or add custom settings here.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

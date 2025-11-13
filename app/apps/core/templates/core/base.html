@@ -5,28 +5,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Short Skirt Long Jacket{% endblock %}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="{% static 'core/css/main.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'core/css/main.css' %}?v=2.0" rel="stylesheet">
     {% block extra_css %}{% endblock %}
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
-    <div class="top-bar">
+<body x-data="{ darkMode: false }" :class="{ 'dark-mode': darkMode }">
+    <div class="top-bar" x-data="{ userMenuOpen: false }">
         <div class="top-bar-left">
-            <h1 class="project-title">Short Skirt Long Jacket</h1>
+            <h1 class="project-title">
+                <i class="fas fa-city"></i>
+                Short Skirt Long Jacket
+            </h1>
         </div>
         <div class="top-bar-right">
-            <div class="user-menu">
-                <button class="user-menu-toggle" id="userMenuToggle">
+            <!-- Dark Mode Toggle -->
+            <button 
+                @click="darkMode = !darkMode" 
+                class="theme-toggle"
+                :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+                <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+            </button>
+            
+            <!-- User Menu -->
+            <div class="user-menu" @click.away="userMenuOpen = false">
+                <button 
+                    class="user-menu-toggle" 
+                    @click="userMenuOpen = !userMenuOpen"
+                    :aria-expanded="userMenuOpen"
+                >
                     <i class="fas fa-user-circle"></i>
+                    <span class="user-name">Admin</span>
+                    <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': userMenuOpen }"></i>
                 </button>
-                <div class="user-menu-dropdown" id="userMenuDropdown">
+                
+                <div 
+                    class="user-menu-dropdown" 
+                    x-show="userMenuOpen"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform scale-95"
+                    x-transition:enter-end="opacity-100 transform scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform scale-100"
+                    x-transition:leave-end="opacity-0 transform scale-95"
+                    @click="userMenuOpen = false"
+                >
                     <a href="{% url 'core:settings' %}" class="user-menu-item">
                         <i class="fas fa-cog"></i>
-                        Settings
+                        <span>Settings</span>
                     </a>
                     <a href="{% url 'admin:index' %}" class="user-menu-item">
                         <i class="fas fa-tools"></i>
-                        Admin
+                        <span>Admin</span>
                     </a>
                 </div>
             </div>
@@ -37,7 +73,45 @@
         {% block content %}{% endblock %}
     </main>
 
-    <script src="{% static 'core/js/main.js' %}"></script>
+    <!-- Toast Notifications Container -->
+    <div 
+        x-data="{ 
+            notifications: [],
+            addNotification(message, type = 'info') {
+                const id = Date.now();
+                this.notifications.push({ id, message, type });
+                setTimeout(() => {
+                    this.notifications = this.notifications.filter(n => n.id !== id);
+                }, 5000);
+            }
+        }"
+        @notify.window="addNotification($event.detail.message, $event.detail.type)"
+        class="toast-container"
+    >
+        <template x-for="notification in notifications" :key="notification.id">
+            <div 
+                class="toast"
+                :class="`toast-${notification.type}`"
+                x-show="true"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-x-full"
+                x-transition:enter-end="opacity-100 transform translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-x-0"
+                x-transition:leave-end="opacity-0 transform translate-x-full"
+            >
+                <i class="fas" :class="{
+                    'fa-check-circle': notification.type === 'success',
+                    'fa-info-circle': notification.type === 'info',
+                    'fa-exclamation-triangle': notification.type === 'warning',
+                    'fa-times-circle': notification.type === 'error'
+                }"></i>
+                <span x-text="notification.message"></span>
+            </div>
+        </template>
+    </div>
+
+    <script src="{% static 'core/js/main.js' %}?v=2.0"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
