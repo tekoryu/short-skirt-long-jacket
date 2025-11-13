@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short Skirt Long Jacket - Modernized Demo</title>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <style>
+        /* ===== CSS Variables for Theme Support ===== */
+        :root {
+            --primary-gradient-start: #667eea;
+            --primary-gradient-end: #764ba2;
+            --primary-color: #667eea;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.2);
+            --transition-speed: 0.3s;
+        }
+
+        .dark-mode {
+            --primary-gradient-start: #7c3aed;
+            --primary-gradient-end: #a855f7;
+            --primary-color: #8b5cf6;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --border-color: #27272a;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ===== Reset and Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* ===== Top Bar Styles ===== */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .top-bar-left .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ===== Theme Toggle Button ===== */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        /* ===== User Menu Styles ===== */
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-menu-toggle i.fa-user-circle {
+            font-size: 1.2rem;
+        }
+
+        .user-menu-toggle .fa-chevron-down {
+            font-size: 0.8rem;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
+            z-index: 1001;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-menu-item:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
+            color: var(--primary-color);
+            padding-left: 1.5rem;
+        }
+
+        .user-menu-item i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0.25rem 0;
+        }
+
+        .text-danger {
+            color: #ef4444 !important;
+        }
+
+        .text-danger:hover {
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.1), transparent) !important;
+            color: #dc2626 !important;
+        }
+
+        /* ===== Main Content Styles ===== */
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ===== Welcome Section ===== */
+        .welcome-section {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .welcome-icon {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        .welcome-section p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+        }
+
+        /* ===== Stats Grid ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: var(--card-bg);
+            padding: 1.75rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all var(--transition-speed) ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            transform: scaleY(0);
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stats-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 12px;
+        }
+
+        .stats-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===== Quick Actions Section ===== */
+        .quick-actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .quick-actions-section h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .action-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .action-card:hover,
+        .action-card.hovered {
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+
+        .action-card:hover i,
+        .action-card.hovered i {
+            transform: scale(1.15);
+        }
+
+        /* ===== Activity Section ===== */
+        .activity-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .activity-section h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        /* ===== Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            border-left: 4px solid;
+        }
+
+        .toast-success {
+            border-color: #10b981;
+        }
+
+        .toast-success i {
+            color: #10b981;
+        }
+
+        .toast-info {
+            border-color: #3b82f6;
+        }
+
+        .toast-info i {
+            color: #3b82f6;
+        }
+
+        /* ===== Utility Classes ===== */
+        .transition-transform {
+            transition: transform var(--transition-speed) ease;
+        }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 1rem;
+            }
+            
+            .project-title {
+                font-size: 1.2rem;
+            }
+            
+            .user-name {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .welcome-section {
+                padding: 2rem 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .toast-container {
+                right: 0.5rem;
+                left: 0.5rem;
+            }
+            
+            .toast {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body x-data="{ darkMode: false }" :class="{ 'dark-mode': darkMode }">
+    <!-- Top Navigation Bar -->
+    <div class="top-bar" x-data="{ userMenuOpen: false }">
+        <div class="top-bar-left">
+            <h1 class="project-title">
+                <i class="fas fa-rocket"></i>
+                Short Skirt Long Jacket
+            </h1>
+        </div>
+        
+        <div class="top-bar-right">
+            <!-- Dark Mode Toggle -->
+            <button 
+                @click="darkMode = !darkMode; window.dispatchEvent(new CustomEvent('notify', { detail: { message: darkMode ? 'Dark mode enabled' : 'Light mode enabled', type: 'info' } }))" 
+                class="theme-toggle"
+                :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+                <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+            </button>
+            
+            <!-- User Menu -->
+            <div class="user-menu" @click.away="userMenuOpen = false">
+                <button 
+                    class="user-menu-toggle" 
+                    @click="userMenuOpen = !userMenuOpen"
+                    :aria-expanded="userMenuOpen"
+                >
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name">Demo User</span>
+                    <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': userMenuOpen }"></i>
+                </button>
+                
+                <div 
+                    class="user-menu-dropdown" 
+                    x-show="userMenuOpen"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform scale-95"
+                    x-transition:enter-end="opacity-100 transform scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform scale-100"
+                    x-transition:leave-end="opacity-0 transform scale-95"
+                    @click="userMenuOpen = false"
+                >
+                    <a href="#" class="user-menu-item" @click.prevent="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Settings clicked!', type: 'info' } }))">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="user-menu-item" @click.prevent="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Admin panel opened', type: 'info' } }))">
+                        <i class="fas fa-tools"></i>
+                        <span>Admin</span>
+                    </a>
+                    <a href="#" class="user-menu-item" @click.prevent="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Profile page', type: 'info' } }))">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                    <div class="menu-divider"></div>
+                    <a href="#" class="user-menu-item text-danger" @click.prevent="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Logged out successfully', type: 'success' } }))">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section with Alpine.js animations -->
+        <div 
+            class="welcome-section"
+            x-data="{ show: false }"
+            x-init="setTimeout(() => show = true, 100)"
+            x-show="show"
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="opacity-0 transform translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+        >
+            <div class="welcome-icon">
+                <i class="fas fa-rocket fa-3x"></i>
+            </div>
+            <h2>Welcome to Short Skirt Long Jacket</h2>
+            <p>Your modernized dashboard with Alpine.js & HTMX is ready to go!</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 42), 50)">
+                <div class="stats-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 x-text="count">0</h3>
+                    <p>Active Users</p>
+                </div>
+            </div>
+            
+            <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 3, 128), 30)">
+                <div class="stats-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 x-text="count">0</h3>
+                    <p>Tasks Completed</p>
+                </div>
+            </div>
+            
+            <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 15), 80)">
+                <div class="stats-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 x-text="count">0</h3>
+                    <p>Active Projects</p>
+                </div>
+            </div>
+            
+            <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 2, 98), 20)">
+                <div class="stats-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 x-text="count + '%'">0%</h3>
+                    <p>Completion Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions-grid" x-data="{ hoveredCard: null }">
+                <button 
+                    class="action-card"
+                    @mouseenter="hoveredCard = 'new-project'"
+                    @mouseleave="hoveredCard = null"
+                    :class="{ 'hovered': hoveredCard === 'new-project' }"
+                    @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'New project created!', type: 'success' } }))"
+                >
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Project</span>
+                </button>
+                
+                <button 
+                    class="action-card"
+                    @mouseenter="hoveredCard = 'add-task'"
+                    @mouseleave="hoveredCard = null"
+                    :class="{ 'hovered': hoveredCard === 'add-task' }"
+                    @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Task added successfully!', type: 'success' } }))"
+                >
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Add Task</span>
+                </button>
+                
+                <button 
+                    class="action-card"
+                    @mouseenter="hoveredCard = 'invite'"
+                    @mouseleave="hoveredCard = null"
+                    :class="{ 'hovered': hoveredCard === 'invite' }"
+                    @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Invitation sent!', type: 'success' } }))"
+                >
+                    <i class="fas fa-user-plus"></i>
+                    <span>Invite Team</span>
+                </button>
+                
+                <button 
+                    class="action-card"
+                    @mouseenter="hoveredCard = 'reports'"
+                    @mouseleave="hoveredCard = null"
+                    :class="{ 'hovered': hoveredCard === 'reports' }"
+                    @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Loading reports...', type: 'info' } }))"
+                >
+                    <i class="fas fa-file-alt"></i>
+                    <span>View Reports</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <h3>Recent Activity</h3>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #10b981;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>Task completed</strong>
+                        <p style="color: var(--text-secondary); margin: 0;">John completed "Update documentation"</p>
+                        <small style="color: var(--text-secondary);">2 minutes ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #3b82f6;">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>New team member</strong>
+                        <p style="color: var(--text-secondary); margin: 0;">Sarah joined the project</p>
+                        <small style="color: var(--text-secondary);">15 minutes ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #f59e0b;">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>Report generated</strong>
+                        <p style="color: var(--text-secondary); margin: 0;">Monthly report is ready</p>
+                        <small style="color: var(--text-secondary);">1 hour ago</small>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #8b5cf6;">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="activity-content">
+                        <strong>New comment</strong>
+                        <p style="color: var(--text-secondary); margin: 0;">Mike commented on "Design review"</p>
+                        <small style="color: var(--text-secondary);">2 hours ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications with Alpine.js -->
+    <div 
+        x-data="{ 
+            notifications: [],
+            addNotification(message, type = 'info') {
+                const id = Date.now();
+                this.notifications.push({ id, message, type });
+                setTimeout(() => {
+                    this.notifications = this.notifications.filter(n => n.id !== id);
+                }, 5000);
+            }
+        }"
+        @notify.window="addNotification($event.detail.message, $event.detail.type)"
+        class="toast-container"
+    >
+        <template x-for="notification in notifications" :key="notification.id">
+            <div 
+                class="toast"
+                :class="`toast-${notification.type}`"
+                x-show="true"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-x-full"
+                x-transition:enter-end="opacity-100 transform translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-x-0"
+                x-transition:leave-end="opacity-0 transform translate-x-full"
+            >
+                <i class="fas" :class="{
+                    'fa-check-circle': notification.type === 'success',
+                    'fa-info-circle': notification.type === 'info',
+                    'fa-exclamation-triangle': notification.type === 'warning',
+                    'fa-times-circle': notification.type === 'error'
+                }"></i>
+                <span x-text="notification.message"></span>
+            </div>
+        </template>
+    </div>
+</body>
+</html>
