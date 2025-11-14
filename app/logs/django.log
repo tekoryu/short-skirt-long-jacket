@@ -33,3 +33,62 @@ WARNING 2025-11-14 00:14:27,395 basehttp 11 140097825778488 "GET /cities/ HTTP/1
 WARNING 2025-11-14 00:50:29,347 basehttp 11 140097825778488 "GET /cities/edit/16467/ HTTP/1.1" 403 135
 WARNING 2025-11-14 01:09:08,044 basehttp 1190 140037464615736 "GET /cities/edit/16467/ HTTP/1.1" 403 135
 WARNING 2025-11-14 01:13:22,158 basehttp 1190 140037464615736 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:38:33,467 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:40:15,108 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:42:44,389 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:42:46,000 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:42:54,476 basehttp 1660 140203246480184 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:43:00,296 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:43:01,201 basehttp 1660 140203246480184 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:43:02,637 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:43:14,580 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:45:13,419 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:48:42,159 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:49:29,466 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:51:02,120 basehttp 1660 140203253685048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:57:01,126 basehttp 1964 140688444713784 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:57:56,354 basehttp 1964 140688444713784 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 01:58:23,907 basehttp 1964 140688444713784 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+ERROR 2025-11-14 01:58:32,424 log 1964 140688444713784 Internal Server Error: /cities/api/seaf-data-by-state/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 148, in seaf_data_by_state_api
+    state_code=models.F('immediate_region__intermediate_region__state__code'),
+               ^^^^^^
+NameError: name 'models' is not defined
+ERROR 2025-11-14 01:58:32,426 basehttp 1964 140688444713784 "GET /cities/api/seaf-data-by-state/ HTTP/1.1" 500 63024
+WARNING 2025-11-14 01:58:34,916 basehttp 1964 140688444713784 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+ERROR 2025-11-14 01:58:37,598 log 1964 140688444713784 Internal Server Error: /cities/api/seaf-data-by-state/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 148, in seaf_data_by_state_api
+    state_code=models.F('immediate_region__intermediate_region__state__code'),
+               ^^^^^^
+NameError: name 'models' is not defined
+ERROR 2025-11-14 01:58:37,600 basehttp 1964 140688444713784 "GET /cities/api/seaf-data-by-state/ HTTP/1.1" 500 63024
+WARNING 2025-11-14 01:58:44,842 basehttp 1964 140688444713784 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+ERROR 2025-11-14 01:58:59,962 log 1964 140688444713784 Internal Server Error: /cities/api/seaf-data-by-state/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 148, in seaf_data_by_state_api
+    state_code=models.F('immediate_region__intermediate_region__state__code'),
+               ^^^^^^
+NameError: name 'models' is not defined
+ERROR 2025-11-14 01:58:59,964 basehttp 1964 140688444713784 "GET /cities/api/seaf-data-by-state/ HTTP/1.1" 500 63024
+WARNING 2025-11-14 01:59:48,587 basehttp 2012 140548767849272 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 02:00:24,996 basehttp 2012 140548767849272 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
