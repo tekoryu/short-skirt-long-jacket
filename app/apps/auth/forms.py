@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import PermissionGroup, ResourcePermission, UserPermission, UserGroup
+from django.contrib.auth.models import Group
+from .models import ResourcePermission, UserPermission, GroupResourcePermission
 
 User = get_user_model()
 
@@ -72,37 +73,23 @@ class PermissionAssignmentForm(forms.ModelForm):
         self.fields['resource_permission'].queryset = ResourcePermission.objects.filter(is_active=True).order_by('resource_name', 'permission_type')
 
 
-class GroupAssignmentForm(forms.ModelForm):
+class GroupResourcePermissionForm(forms.ModelForm):
     """
-    Form for assigning users to groups.
+    This class is responsible for creating forms to assign resource permissions to groups.
     """
     class Meta:
-        model = UserGroup
-        fields = ['user', 'group']
+        model = GroupResourcePermission
+        fields = ['group', 'resource_permission']
         widgets = {
-            'user': forms.Select(attrs={'class': 'form-control'}),
             'group': forms.Select(attrs={'class': 'form-control'}),
+            'resource_permission': forms.Select(attrs={'class': 'form-control'}),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Only show active users and groups
-        self.fields['user'].queryset = User.objects.filter(is_active=True).order_by('email')
-        self.fields['group'].queryset = PermissionGroup.objects.filter(is_active=True).order_by('name')
-
-
-class PermissionGroupForm(forms.ModelForm):
-    """
-    Form for creating/editing permission groups.
-    """
-    class Meta:
-        model = PermissionGroup
-        fields = ['name', 'description', 'is_active']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        # Only show active groups and permissions
+        self.fields['group'].queryset = Group.objects.all().order_by('name')
+        self.fields['resource_permission'].queryset = ResourcePermission.objects.filter(is_active=True).order_by('resource_name', 'permission_type')
 
 
 class ResourcePermissionForm(forms.ModelForm):

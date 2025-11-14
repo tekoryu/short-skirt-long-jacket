@@ -11,11 +11,11 @@ from django.utils import timezone
 from django.db import models
 from django_ratelimit.decorators import ratelimit
 from .models import (
-    User, PermissionGroup, ResourcePermission, UserPermission,
-    GroupPermission, UserGroup, PermissionLog
+    User, ResourcePermission, UserPermission,
+    GroupResourcePermission, PermissionLog
 )
 from .mixins import PermissionRequiredMixin, APIResponseMixin
-from .forms import UserRegistrationForm, PermissionAssignmentForm, GroupAssignmentForm
+from .forms import UserRegistrationForm, PermissionAssignmentForm, GroupResourcePermissionForm
 import logging
 
 logger = logging.getLogger(__name__)

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
 from django.db import models
-from .models import UserPermission, GroupPermission, UserGroup, PermissionLog
+from .models import UserPermission, GroupResourcePermission, PermissionLog
 import logging
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,8 @@ class PermissionRequiredMixin:
     
     def check_resource_permission(self, resource_name, permission_type):
         """
-        Check if user has permission for specific resource and action.
+        This method is responsible for checking if user has permission for specific resource and action.
+        Checks both direct user permissions and group permissions via Django's built-in Group model.
         """
         user = self.request.user
         
@@ -66,13 +67,10 @@ class PermissionRequiredMixin:
             logger.debug(f"User {user.email} accessed {resource_name} with {permission_type}")
             return True
 
-        # Check group permissions
-        user_groups = UserGroup.objects.filter(
-            user=user,
-            is_active=True
-        ).values_list('group', flat=True)
+        # Check group permissions via Django's built-in Group model
+        user_groups = user.groups.values_list('id', flat=True)
 
-        group_perms = GroupPermission.objects.filter(
+        group_perms = GroupResourcePermission.objects.filter(
             group__in=user_groups,
             resource_permission__resource_name=resource_name,
             resource_permission__permission_type=permission_type

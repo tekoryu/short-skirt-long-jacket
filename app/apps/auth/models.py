@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class User(AbstractUser):
     """
-    Custom User model extending AbstractUser with additional fields
+    This class is responsible for extending Django's AbstractUser with additional fields
     for granular permission control.
     """
     email = models.EmailField(unique=True)
@@ -29,27 +29,9 @@ class User(AbstractUser):
         return f"{self.email} ({self.get_full_name() or self.username})"
 
 
-class PermissionGroup(models.Model):
-    """
-    Custom permission groups for organizing permissions by functionality.
-    """
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        db_table = 'auth_permission_group'
-        verbose_name = 'Permission Group'
-        verbose_name_plural = 'Permission Groups'
-    
-    def __str__(self):
-        return self.name
-
-
 class ResourcePermission(models.Model):
     """
-    Granular permissions for specific resources (models/views).
+    This class is responsible for defining granular permissions for specific resources (models/views).
     """
     PERMISSION_TYPES = [
         ('view', 'View'),
@@ -81,7 +63,7 @@ class ResourcePermission(models.Model):
 
 class UserPermission(models.Model):
     """
-    Links users to specific resource permissions.
+    This class is responsible for linking users to specific resource permissions directly.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='custom_permissions')
     resource_permission = models.ForeignKey(ResourcePermission, on_delete=models.CASCADE)
@@ -100,42 +82,22 @@ class UserPermission(models.Model):
         return f"{self.user.email} - {self.resource_permission}"
 
 
-class GroupPermission(models.Model):
+class GroupResourcePermission(models.Model):
     """
-    Links permission groups to resource permissions.
+    This class is responsible for linking Django's built-in Group model to resource permissions.
     """
-    group = models.ForeignKey(PermissionGroup, on_delete=models.CASCADE, related_name='group_permissions')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='resource_permissions')
     resource_permission = models.ForeignKey(ResourcePermission, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        db_table = 'auth_group_permission'
+        db_table = 'auth_group_resource_permission'
         verbose_name = 'Group-Permission Assignment'
         verbose_name_plural = 'Group-Permission Assignments'
         unique_together = ['group', 'resource_permission']
     
     def __str__(self):
         return f"{self.group.name} - {self.resource_permission}"
-
-
-class UserGroup(models.Model):
-    """
-    Links users to permission groups.
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_groups')
-    group = models.ForeignKey(PermissionGroup, on_delete=models.CASCADE, related_name='group_users')
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='added_to_groups')
-    added_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    
-    class Meta:
-        db_table = 'auth_user_group'
-        verbose_name = 'User-Group Assignment'
-        verbose_name_plural = 'User-Group Assignments'
-        unique_together = ['user', 'group']
-    
-    def __str__(self):
-        return f"{self.user.email} - {self.group.name}"
 
 
 class PermissionLog(models.Model):

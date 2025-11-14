@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.models import Group
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from .models import (
-    User, PermissionGroup, ResourcePermission, UserPermission,
-    GroupPermission, UserGroup, PermissionLog
+    User, ResourcePermission, UserPermission,
+    GroupResourcePermission, PermissionLog
 )
 
 
@@ -42,21 +43,6 @@ class UserAdmin(BaseUserAdmin):
         return super().get_queryset(request).select_related()
 
 
-@admin.register(PermissionGroup)
-class PermissionGroupAdmin(admin.ModelAdmin):
-    """
-    Admin for permission groups.
-    """
-    list_display = ('name', 'description', 'is_active', 'created_at', 'user_count')
-    list_filter = ('is_active', 'created_at')
-    search_fields = ('name', 'description')
-    ordering = ('name',)
-    
-    def user_count(self, obj):
-        return obj.group_users.filter(is_active=True).count()
-    user_count.short_description = 'Active Users'
-
-
 @admin.register(ResourcePermission)
 class ResourcePermissionAdmin(admin.ModelAdmin):
     """
@@ -90,10 +76,10 @@ class UserPermissionAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-@admin.register(GroupPermission)
-class GroupPermissionAdmin(admin.ModelAdmin):
+@admin.register(GroupResourcePermission)
+class GroupResourcePermissionAdmin(admin.ModelAdmin):
     """
-    Admin for group permissions.
+    This class is responsible for managing group resource permission assignments in the admin interface.
     """
     list_display = ('group', 'resource_permission', 'created_at')
     list_filter = ('created_at', 'resource_permission__permission_type')
@@ -102,25 +88,6 @@ class GroupPermissionAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('group', 'resource_permission')
-
-
-@admin.register(UserGroup)
-class UserGroupAdmin(admin.ModelAdmin):
-    """
-    Admin for user groups.
-    """
-    list_display = ('user', 'group', 'added_by', 'added_at', 'is_active')
-    list_filter = ('is_active', 'added_at', 'group')
-    search_fields = ('user__email', 'user__username', 'group__name', 'added_by__email')
-    ordering = ('-added_at',)
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user', 'group', 'added_by')
-    
-    def save_model(self, request, obj, form, change):
-        if not change:  # New group assignment
-            obj.added_by = request.user
-        super().save_model(request, obj, form, change)
 
 
 @admin.register(PermissionLog)
