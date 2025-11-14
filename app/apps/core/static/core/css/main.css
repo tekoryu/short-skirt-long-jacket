@@ -55,6 +55,10 @@ body {
     transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
+a {
+    text-decoration: none;
+  }
+
 /* Top bar styles */
 .top-bar {
     background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
