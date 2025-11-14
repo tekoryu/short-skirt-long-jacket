@@ -40,8 +40,8 @@ class PermissionGroup(models.Model):
     
     class Meta:
         db_table = 'auth_permission_group'
-        verbose_name = 'User Group'
-        verbose_name_plural = 'User Groups'
+        verbose_name = 'Permission Group'
+        verbose_name_plural = 'Permission Groups'
     
     def __str__(self):
         return self.name
@@ -130,8 +130,8 @@ class UserGroup(models.Model):
     
     class Meta:
         db_table = 'auth_user_group'
-        verbose_name = 'User Group'
-        verbose_name_plural = 'User Groups'
+        verbose_name = 'User-Group Assignment'
+        verbose_name_plural = 'User-Group Assignments'
         unique_together = ['user', 'group']
     
     def __str__(self):
