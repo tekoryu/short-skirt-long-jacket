@@ -159,42 +159,42 @@
 
 <!-- Stats Cards -->
 <div class="stats-grid">
-    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 13, 5570), 20)">
+    <div class="stats-card">
         <div class="stats-icon">
             <i class="fas fa-city"></i>
         </div>
         <div class="stats-content">
-            <h3 x-text="count">0</h3>
+            <h3>5570</h3>
             <p>Municípios</p>
         </div>
     </div>
     
-    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 27), 50)">
+    <div class="stats-card">
         <div class="stats-icon">
             <i class="fas fa-map-marked-alt"></i>
         </div>
         <div class="stats-content">
-            <h3 x-text="count">0</h3>
+            <h3>27</h3>
             <p>Estados</p>
         </div>
     </div>
     
-    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 1, 5), 100)">
+    <div class="stats-card">
         <div class="stats-icon">
             <i class="fas fa-globe-americas"></i>
         </div>
         <div class="stats-content">
-            <h3 x-text="count">0</h3>
+            <h3>5</h3>
             <p>Regiões</p>
         </div>
     </div>
     
-    <div class="stats-card" x-data="{ count: 0 }" x-init="setInterval(() => count = Math.min(count + 5, 100), 30)">
+    <div class="stats-card">
         <div class="stats-icon">
             <i class="fas fa-database"></i>
         </div>
         <div class="stats-content">
-            <h3 x-text="count + '%'">0%</h3>
+            <h3>100%</h3>
             <p>Cobertura de Dados</p>
         </div>
     </div>
@@ -358,38 +358,11 @@
             maxBoundsViscosity: 1.0
         });
         
-        // Add plain white tile layer (no map details outside Brazil)
+        // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18,
-            minZoom: 4,
-            bounds: CONFIG.brazilBounds
-        }).addTo(map);
-        
-        // Add mask to hide everything outside Brazil bounds
-        const maskBounds = [
-            [90, -180],   // North-West corner of world
-            [90, 180],    // North-East corner of world
-            [-90, 180],   // South-East corner of world
-            [-90, -180],  // South-West corner of world
-            [90, -180]    // Close the polygon
-        ];
-        
-        // Create hole in mask for Brazil
-        const brazilHole = [
-            [CONFIG.brazilBounds[0][0], CONFIG.brazilBounds[0][1]], // SW
-            [CONFIG.brazilBounds[1][0], CONFIG.brazilBounds[0][1]], // NW
-            [CONFIG.brazilBounds[1][0], CONFIG.brazilBounds[1][1]], // NE
-            [CONFIG.brazilBounds[0][0], CONFIG.brazilBounds[1][1]], // SE
-            [CONFIG.brazilBounds[0][0], CONFIG.brazilBounds[0][1]]  // Close
-        ];
-        
-        L.polygon([maskBounds, brazilHole], {
-            color: '#ffffff',
-            fillColor: '#ffffff',
-            fillOpacity: 1,
-            stroke: false,
-            interactive: false
+            minZoom: 4
         }).addTo(map);
         
         // Set initial bounds to Brazil
@@ -397,6 +370,23 @@
         
         // Add legend once
         addLegend();
+        
+        // Add zoom event listener to update polygon weights dynamically
+        map.on('zoomend', function() {
+            if (geoJsonLayer) {
+                geoJsonLayer.eachLayer(function(layer) {
+                    if (layer.setStyle) {
+                        layer.setStyle({ weight: getPolygonWeight() });
+                    }
+                });
+            }
+        });
+        
+        // Fix map rendering issue - invalidate size after container animation completes
+        // Container has 300ms delay + 500ms animation = 800ms total
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 900);
         
         // Load data
         loadMapData(currentView);
@@ -436,6 +426,13 @@
             document.getElementById('map-title').textContent = 
                 view === 'municipalities' ? CONFIG.municipalities.title : CONFIG.states.title;
             
+            // Ensure map renders correctly after data load
+            // Call immediately and after a delay to handle both initial load and view switches
+            map.invalidateSize();
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+            
         } catch (error) {
             console.error('Error loading map data:', error);
             document.getElementById('map-loading').innerHTML = 
@@ -461,6 +458,13 @@
         return CONFIG.colors[seafCategory] || CONFIG.colors[null];
     }
     
+    function getPolygonWeight() {
+        // Calculate weight based on zoom level - thinner when zoomed out
+        const zoom = map.getZoom();
+        // At zoom 4 (min): weight = 0.2, at zoom 10: weight = 1, at zoom 18 (max): weight = 2
+        return Math.max(0.1, Math.min(2, (zoom - 4) * 0.15 + 0.2));
+    }
+    
     function style(feature, view) {
         const code = feature.properties.codarea;
         let seafCategory;
@@ -478,7 +482,7 @@
         
         return {
             fillColor: getColor(seafCategory),
-            weight: 1,
+            weight: getPolygonWeight(),
             opacity: 1,
             color: '#666',
             fillOpacity: 0.7

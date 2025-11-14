@@ -92,3 +92,5 @@ NameError: name 'models' is not defined
 ERROR 2025-11-14 01:58:59,964 basehttp 1964 140688444713784 "GET /cities/api/seaf-data-by-state/ HTTP/1.1" 500 63024
 WARNING 2025-11-14 01:59:48,587 basehttp 2012 140548767849272 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-14 02:00:24,996 basehttp 2012 140548767849272 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 02:11:46,867 basehttp 2105 139822990732088 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 02:12:53,548 basehttp 2105 139822990732088 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
