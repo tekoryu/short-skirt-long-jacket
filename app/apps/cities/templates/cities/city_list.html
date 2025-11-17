@@ -1,58 +1,241 @@
 {% extends "core/base.html" %}
 
-{% block title %}Cities - Permission Demo{% endblock %}
+{% block title %}Cidades - SEAG Digital{% endblock %}
+
+{% block extra_css %}
+<style>
+/* City List Specific Styles */
+.cities-header {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.cities-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal-1), var(--teal-2), var(--teal-3));
+}
+
+.cities-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-teal {
+    background: linear-gradient(135deg, var(--teal-2), var(--teal-3));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-teal:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.btn-teal-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-teal-outline:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.cities-table-container {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.cities-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cities-table thead {
+    background: linear-gradient(135deg, rgba(12, 171, 168, 0.05), rgba(0, 143, 140, 0.05));
+    border-bottom: 2px solid var(--border-color);
+}
+
+.cities-table th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cities-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.cities-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.cities-table tbody tr:hover {
+    background: rgba(12, 171, 168, 0.03);
+}
+
+.cities-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.btn-edit {
+    background: transparent;
+    color: var(--primary-color);
+    border: 1.5px solid var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.85rem;
+}
+
+.btn-edit:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--border-color);
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3>Cities List</h3>
-                    <div>
-                        <a href="{% url 'cities:download_cities' %}" class="btn btn-success me-2">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                        <a href="{% url 'cities:city_api' %}" class="btn btn-info">
-                            <i class="fas fa-code"></i> API
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    {% if cities %}
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>State</th>
-                                        <th>Population</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for city in cities %}
-                                    <tr>
-                                        <td>{{ city.name }}</td>
-                                        <td>{{ city.state }}</td>
-                                        <td>{{ city.population|default:"N/A" }}</td>
-                                        <td>
-                                            <a href="{% url 'cities:edit_city' city.id %}" class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <p class="text-muted">No cities found.</p>
-                    {% endif %}
-                </div>
+<!-- Page Header -->
+<div 
+    class="cities-header"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 100)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <i class="fas fa-city" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <h2 style="margin: 0;">Municípios Brasileiros</h2>
             </div>
+            <p style="color: var(--text-secondary); margin: 0;">
+                Navegue e gerencie dados de municípios de todo o Brasil
+            </p>
+        </div>
+        
+        <div class="cities-actions">
+            <a href="{% url 'cities:download_cities' %}" class="btn-teal">
+                <i class="fas fa-download"></i>
+                <span>Download</span>
+            </a>
+            <a href="{% url 'cities:city_api' %}" class="btn-teal-outline">
+                <i class="fas fa-code"></i>
+                <span>API</span>
+            </a>
         </div>
     </div>
+</div>
+
+<!-- Cities Table -->
+<div 
+    class="cities-table-container"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 200)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    {% if cities %}
+        <table class="cities-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Nome</th>
+                    <th><i class="fas fa-flag" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Estado</th>
+                    <th><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>População</th>
+                    <th style="text-align: center;"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for city in cities %}
+                <tr>
+                    <td><strong>{{ city.name }}</strong></td>
+                    <td>{{ city.state }}</td>
+                    <td>{{ city.population|default:"N/A" }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'cities:edit_city' city.id %}" class="btn-edit">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-city"></i>
+            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Nenhuma Cidade Encontrada</h3>
+            <p>Ainda não há municípios no banco de dados.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
 

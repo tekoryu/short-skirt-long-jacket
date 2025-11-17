@@ -111,3 +111,55 @@ def city_api(request):
     }
 
     return JsonResponse(data)
+
+
+def seaf_data_api(request):
+    """
+    This endpoint is responsible for returning municipality SEAF category data for choropleth map visualization.
+    Returns JSON with municipality codes and their SEAF categories.
+    """
+    municipalities = Municipality.objects.filter(
+        seaf_category__isnull=False
+    ).values('code', 'name', 'seaf_category')
+    
+    # Create a dictionary mapping IBGE code to SEAF category
+    data = {
+        municipality['code']: {
+            'name': municipality['name'],
+            'seaf_category': municipality['seaf_category']
+        }
+        for municipality in municipalities
+    }
+    
+    return JsonResponse(data)
+
+
+def seaf_data_by_state_api(request):
+    """
+    This endpoint is responsible for returning aggregated SEAF category data by state.
+    Returns JSON with state codes and their average SEAF categories.
+    """
+    from django.db.models import Avg, Count, F
+    
+    # Aggregate SEAF categories by state
+    state_data = Municipality.objects.filter(
+        seaf_category__isnull=False
+    ).values(
+        state_code=F('immediate_region__intermediate_region__state__code'),
+        state_name=F('immediate_region__intermediate_region__state__name')
+    ).annotate(
+        avg_category=Avg('seaf_category'),
+        total_municipalities=Count('id')
+    )
+    
+    # Create dictionary mapping state code to aggregated data
+    data = {
+        item['state_code']: {
+            'name': item['state_name'],
+            'avg_category': round(item['avg_category'], 1),
+            'total_municipalities': item['total_municipalities']
+        }
+        for item in state_data
+    }
+    
+    return JsonResponse(data)

@@ -108,6 +108,9 @@ class Municipality(models.Model):
     wiki_mayor_mandate_end = models.IntegerField(null=True, blank=True, verbose_name="Mayor Mandate End (Wikipedia)")
     wiki_data_updated_at = models.DateTimeField(null=True, blank=True, verbose_name="Wikipedia Data Updated At")
     
+    # SEAF classification
+    seaf_category = models.IntegerField(null=True, blank=True, verbose_name="SEAF Category")
+    
     class Meta:
         verbose_name = "Municipality"
         verbose_name_plural = "Municipalities"

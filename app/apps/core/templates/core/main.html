@@ -1,10 +1,571 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
+{% block extra_css %}
+<style>
+/* Map Section Styles */
+.map-section {
+    margin: 2rem 0;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.map-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid var(--border-color);
+    background: linear-gradient(135deg, rgba(12, 171, 168, 0.05), rgba(0, 143, 140, 0.05));
+}
+
+.map-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.map-header h3 i {
+    color: var(--primary-color);
+}
+
+.map-container {
+    width: 100%;
+    height: 600px;
+    position: relative;
+}
+
+#seaf-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+}
+
+.leaflet-popup-content {
+    margin: 0.75rem;
+    font-family: var(--font-family);
+}
+
+/* Legend styles */
+.map-legend {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    line-height: 1.5;
+}
+
+.map-legend h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Loading state */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.map-loading i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Map view toggle buttons */
+.map-view-btn {
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.map-view-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.map-view-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.map-view-btn i {
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="welcome-section">
-    <h2>Welcome to Short Skirt Long Jacket</h2>
-    <p>Your project dashboard is ready to go!</p>
+<!-- Welcome Section with Alpine.js animations -->
+<div 
+    class="welcome-section"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 100)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div class="welcome-icon">
+        <i class="fas fa-city fa-3x"></i>
+    </div>
+    <h2>Bem-vindo ao SEAG Digital</h2>
+    <p>Uma plataforma sofisticada de dados de municípios brasileiros</p>
 </div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stats-card">
+        <div class="stats-icon">
+            <i class="fas fa-city"></i>
+        </div>
+        <div class="stats-content">
+            <h3>5570</h3>
+            <p>Municípios</p>
+        </div>
+    </div>
+    
+    <div class="stats-card">
+        <div class="stats-icon">
+            <i class="fas fa-map-marked-alt"></i>
+        </div>
+        <div class="stats-content">
+            <h3>27</h3>
+            <p>Estados</p>
+        </div>
+    </div>
+    
+    <div class="stats-card">
+        <div class="stats-icon">
+            <i class="fas fa-globe-americas"></i>
+        </div>
+        <div class="stats-content">
+            <h3>5</h3>
+            <p>Regiões</p>
+        </div>
+    </div>
+    
+    <div class="stats-card">
+        <div class="stats-icon">
+            <i class="fas fa-database"></i>
+        </div>
+        <div class="stats-content">
+            <h3>100%</h3>
+            <p>Cobertura de Dados</p>
+        </div>
+    </div>
+</div>
+
+<!-- SEAF Choropleth Map -->
+<div 
+    class="map-section"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 300)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div class="map-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <h3 style="margin: 0;">
+                <i class="fas fa-map"></i>
+                <span id="map-title">Mapa Coroplético - Classificação SEAF dos Municípios</span>
+            </h3>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="view-municipalities" class="map-view-btn active" onclick="switchMapView('municipalities')">
+                    <i class="fas fa-city"></i> Municípios
+                </button>
+                <button id="view-states" class="map-view-btn" onclick="switchMapView('states')">
+                    <i class="fas fa-map-marked-alt"></i> Estados
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="map-container">
+        <div id="seaf-map"></div>
+        <div class="map-loading" id="map-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando mapa...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions-section">
+    <h3>Ações Rápidas</h3>
+    <div class="quick-actions-grid" x-data="{ hoveredCard: null }">
+        <a
+            href="{% url 'cities:city_list' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'cities'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'cities' }"
+        >
+            <i class="fas fa-list"></i>
+            <span>Ver Cidades</span>
+        </a>
+        
+        <a
+            href="{% url 'admin:index' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'admin'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'admin' }"
+        >
+            <i class="fas fa-tools"></i>
+            <span>Painel Admin</span>
+        </a>
+        
+        <a
+            href="{% url 'core:settings' %}"
+            class="action-card"
+            @mouseenter="hoveredCard = 'settings'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'settings' }"
+        >
+            <i class="fas fa-cog"></i>
+            <span>Configurações</span>
+        </a>
+        
+        <button
+            class="action-card"
+            @mouseenter="hoveredCard = 'export'"
+            @mouseleave="hoveredCard = null"
+            :class="{ 'hovered': hoveredCard === 'export' }"
+            @click="window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Recurso de exportação em breve!', type: 'info' } }))"
+        >
+            <i class="fas fa-download"></i>
+            <span>Exportar Dados</span>
+        </button>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="activity-section">
+    <h3>Atividade Recente</h3>
+    <div class="activity-list">
+        <div class="activity-item">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #0CABA8, #008F8C);">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="activity-content">
+                <strong>Dados Atualizados</strong>
+                <p style="color: var(--text-secondary); margin: 0;">Dados dos municípios sincronizados</p>
+                <small style="color: var(--text-secondary);">Recentemente</small>
+            </div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #0FC2C0, #0CABA8);">
+                <i class="fas fa-map"></i>
+            </div>
+            <div class="activity-content">
+                <strong>Sistema Pronto</strong>
+                <p style="color: var(--text-secondary); margin: 0;">Todos os sistemas operacionais</p>
+                <small style="color: var(--text-secondary);">Ativo</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// This script is responsible for rendering an interactive choropleth map of Brazilian municipalities colored by SEAF categories
+(function() {
+    'use strict';
+    
+    // Configuration
+    const CONFIG = {
+        brazilBounds: [[-33.75, -73.99], [5.27, -28.85]], // Southwest and Northeast corners of Brazil
+        municipalities: {
+            geoJsonUrl: '{% static "geo/brazil_municipalities_simplified.json" %}',
+            dataUrl: '{% url "cities:seaf_data_api" %}',
+            title: 'Mapa Coroplético - Classificação SEAF dos Municípios'
+        },
+        states: {
+            geoJsonUrl: '{% static "geo/brazil_states.json" %}',
+            dataUrl: '{% url "cities:seaf_data_by_state_api" %}',
+            title: 'Mapa Coroplético - Classificação SEAF por Estado (Média)'
+        },
+        colors: {
+            0: '#fee5d9',
+            1: '#fc9272',
+            2: '#fb6a4a',
+            3: '#a50f15',
+            null: '#cccccc'
+        }
+    };
+    
+    // Current view state
+    let currentView = 'municipalities';
+    
+    // Initialize map
+    let map = null;
+    let seafData = {};
+    let geoJsonLayer = null;
+    
+    function initMap() {
+        map = L.map('seaf-map', {
+            maxBounds: CONFIG.brazilBounds,
+            maxBoundsViscosity: 1.0,
+            worldCopyJump: false,
+            maxBoundsViscosity: 1.0
+        });
+        
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18,
+            minZoom: 4
+        }).addTo(map);
+        
+        // Set initial bounds to Brazil
+        map.fitBounds(CONFIG.brazilBounds);
+        
+        // Add legend once
+        addLegend();
+        
+        // Add zoom event listener to update polygon weights dynamically
+        map.on('zoomend', function() {
+            if (geoJsonLayer) {
+                geoJsonLayer.eachLayer(function(layer) {
+                    if (layer.setStyle) {
+                        layer.setStyle({ weight: getPolygonWeight() });
+                    }
+                });
+            }
+        });
+        
+        // Fix map rendering issue - invalidate size after container animation completes
+        // Container has 300ms delay + 500ms animation = 800ms total
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 900);
+        
+        // Load data
+        loadMapData(currentView);
+    }
+    
+    async function loadMapData(view = 'municipalities') {
+        try {
+            const viewConfig = CONFIG[view];
+            
+            // Show loading
+            document.getElementById('map-loading').style.display = 'block';
+            document.getElementById('map-loading').innerHTML = 
+                '<i class="fas fa-spinner fa-spin"></i><p>Carregando mapa...</p>';
+            
+            // Fetch SEAF data first
+            const seafResponse = await fetch(viewConfig.dataUrl);
+            seafData = await seafResponse.json();
+            console.log('SEAF data loaded:', Object.keys(seafData).length, 'items');
+            
+            // Fetch GeoJSON data
+            const geoResponse = await fetch(viewConfig.geoJsonUrl);
+            const geoJsonData = await geoResponse.json();
+            console.log('GeoJSON data loaded:', geoJsonData.features.length, 'features');
+            
+            // Hide loading indicator
+            document.getElementById('map-loading').style.display = 'none';
+            
+            // Clear existing layer
+            if (geoJsonLayer) {
+                map.removeLayer(geoJsonLayer);
+            }
+            
+            // Render map
+            renderChoropleth(geoJsonData, view);
+            
+            // Update title
+            document.getElementById('map-title').textContent = 
+                view === 'municipalities' ? CONFIG.municipalities.title : CONFIG.states.title;
+            
+            // Ensure map renders correctly after data load
+            // Call immediately and after a delay to handle both initial load and view switches
+            map.invalidateSize();
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+            
+        } catch (error) {
+            console.error('Error loading map data:', error);
+            document.getElementById('map-loading').innerHTML = 
+                '<i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar dados do mapa</p>';
+        }
+    }
+    
+    // Global function for button onclick
+    window.switchMapView = function(view) {
+        if (currentView === view) return;
+        
+        currentView = view;
+        
+        // Update button states
+        document.getElementById('view-municipalities').classList.toggle('active', view === 'municipalities');
+        document.getElementById('view-states').classList.toggle('active', view === 'states');
+        
+        // Reload map data
+        loadMapData(view);
+    };
+    
+    function getColor(seafCategory) {
+        return CONFIG.colors[seafCategory] || CONFIG.colors[null];
+    }
+    
+    function getPolygonWeight() {
+        // Calculate weight based on zoom level - thinner when zoomed out
+        const zoom = map.getZoom();
+        // At zoom 4 (min): weight = 0.2, at zoom 10: weight = 1, at zoom 18 (max): weight = 2
+        return Math.max(0.1, Math.min(2, (zoom - 4) * 0.15 + 0.2));
+    }
+    
+    function style(feature, view) {
+        const code = feature.properties.codarea;
+        let seafCategory;
+        
+        if (view === 'states') {
+            // For states, use avg_category and round it
+            seafCategory = seafData[code]?.avg_category;
+            if (seafCategory !== undefined) {
+                seafCategory = Math.round(seafCategory);
+            }
+        } else {
+            // For municipalities
+            seafCategory = seafData[code]?.seaf_category;
+        }
+        
+        return {
+            fillColor: getColor(seafCategory),
+            weight: getPolygonWeight(),
+            opacity: 1,
+            color: '#666',
+            fillOpacity: 0.7
+        };
+    }
+    
+    function onEachFeature(feature, layer, view) {
+        const code = feature.properties.codarea;
+        const name = feature.properties.nome || 'Desconhecido';
+        const seafInfo = seafData[code];
+        
+        let tooltipContent;
+        if (view === 'states') {
+            const avgCategory = seafInfo?.avg_category !== undefined ? seafInfo.avg_category : 'Sem dados';
+            const totalMunicipalities = seafInfo?.total_municipalities || 0;
+            tooltipContent = 
+                `<strong>${name}</strong><br/>` +
+                `Categoria SEAF Média: ${avgCategory}<br/>` +
+                `Total de Municípios: ${totalMunicipalities}`;
+        } else {
+            const seafCategory = seafInfo?.seaf_category !== undefined ? seafInfo.seaf_category : 'Sem dados';
+            tooltipContent = 
+                `<strong>${name}</strong><br/>` +
+                `Categoria SEAF: ${seafCategory}`;
+        }
+        
+        // Bind tooltip
+        layer.bindTooltip(tooltipContent, {
+            sticky: true,
+            className: 'custom-tooltip'
+        });
+    }
+    
+    function renderChoropleth(geoJsonData, view) {
+        geoJsonLayer = L.geoJSON(geoJsonData, {
+            style: (feature) => style(feature, view),
+            onEachFeature: (feature, layer) => onEachFeature(feature, layer, view)
+        }).addTo(map);
+    }
+    
+    function addLegend() {
+        if (window.mapLegend) {
+            map.removeControl(window.mapLegend);
+        }
+        
+        const legend = L.control({ position: 'bottomright' });
+        
+        legend.onAdd = function(map) {
+            const div = L.DomUtil.create('div', 'map-legend');
+            
+            div.innerHTML = '<h4>Categoria SEAF</h4>';
+            
+            // Add category items
+            for (let i = 0; i <= 3; i++) {
+                div.innerHTML += 
+                    `<div class="legend-item">
+                        <span class="legend-color" style="background: ${CONFIG.colors[i]}"></span>
+                        <span>Categoria ${i}</span>
+                    </div>`;
+            }
+            
+            // Add "no data" item
+            div.innerHTML += 
+                `<div class="legend-item">
+                    <span class="legend-color" style="background: ${CONFIG.colors[null]}"></span>
+                    <span>Sem dados</span>
+                </div>`;
+            
+            return div;
+        };
+        
+        legend.addTo(map);
+        window.mapLegend = legend;
+    }
+    
+    // Initialize map when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+        initMap();
+    }
+    
+})();
+</script>
 {% endblock %}
 

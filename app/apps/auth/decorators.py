@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db import models
 from functools import wraps
-from .models import UserPermission, GroupPermission, UserGroup
+from .models import UserPermission, GroupResourcePermission
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 def permission_required(resource_name, permission_type='view', raise_exception=True):
     """
-    Decorator to check resource-based permissions.
+    This decorator is responsible for checking resource-based permissions.
+    Checks both direct user permissions and group permissions via Django's built-in Group model.
     """
     def decorator(view_func):
         @wraps(view_func)
@@ -22,7 +23,7 @@ def permission_required(resource_name, permission_type='view', raise_exception=T
                     raise PermissionDenied("Authentication required.")
                 return redirect('auth:login')
             
-            # Check permission using the same logic as mixin
+            # Check direct user permissions
             user_perms = request.user.custom_permissions.filter(
                 resource_permission__resource_name=resource_name,
                 resource_permission__permission_type=permission_type,
@@ -37,13 +38,10 @@ def permission_required(resource_name, permission_type='view', raise_exception=T
             if active_user_perms.exists():
                 return view_func(request, *args, **kwargs)
             
-            # Check group permissions
-            user_groups = UserGroup.objects.filter(
-                user=request.user,
-                is_active=True
-            ).values_list('group', flat=True)
+            # Check group permissions via Django's built-in Group model
+            user_groups = request.user.groups.values_list('id', flat=True)
             
-            group_perms = GroupPermission.objects.filter(
+            group_perms = GroupResourcePermission.objects.filter(
                 group__in=user_groups,
                 resource_permission__resource_name=resource_name,
                 resource_permission__permission_type=permission_type
