@@ -1,5 +1,5 @@
 /**
- * Main JavaScript for Short Skirt Long Jacket
+ * Main JavaScript for SEAG Digital
  * Using Alpine.js for reactivity and HTMX for dynamic content
  */
 

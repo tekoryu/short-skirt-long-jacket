@@ -94,3 +94,19 @@ WARNING 2025-11-14 01:59:48,587 basehttp 2012 140548767849272 "GET /.well-known/
 WARNING 2025-11-14 02:00:24,996 basehttp 2012 140548767849272 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-14 02:11:46,867 basehttp 2105 139822990732088 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-14 02:12:53,548 basehttp 2105 139822990732088 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+WARNING 2025-11-14 19:13:44,773 basehttp 11 140701954272056 "GET /favicon.ico HTTP/1.1" 404 3182
+ERROR 2025-11-14 19:17:37,551 log 11 140701958331192 Internal Server Error: /cities/api/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 64, in city_api
+    from apps.auth.models import UserPermission, GroupPermission, UserGroup
+ImportError: cannot import name 'GroupPermission' from 'apps.auth.models' (/app/apps/auth/models.py)
+ERROR 2025-11-14 19:17:37,552 basehttp 11 140701958331192 "GET /cities/api/ HTTP/1.1" 500 63373
+WARNING 2025-11-14 19:26:06,233 basehttp 11 140474753739576 "GET /favicon.ico HTTP/1.1" 404 3182
+WARNING 2025-11-17 13:31:00,313 basehttp 11 139704572705592 "GET /favicon.ico HTTP/1.1" 404 3182
+WARNING 2025-11-17 13:31:40,067 basehttp 11 139704570596152 "GET /favicon.ico HTTP/1.1" 404 3182
