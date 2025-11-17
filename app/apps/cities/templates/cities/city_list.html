@@ -105,6 +105,38 @@
     letter-spacing: 0.5px;
 }
 
+.cities-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.cities-table th.sortable:hover {
+    background: rgba(12, 171, 168, 0.08);
+}
+
+.sort-icon {
+    display: inline-block;
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(12, 171, 168, 0.1);
+}
+
 .cities-table td {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -155,6 +187,29 @@
     color: var(--border-color);
     margin-bottom: 1rem;
 }
+
+.results-count {
+    padding: 1rem 1.5rem;
+    background: rgba(12, 171, 168, 0.05);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.seaf-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.seaf-0 { background: #e0e0e0; color: #424242; }
+.seaf-1 { background: #e8f5e9; color: #2e7d32; }
+.seaf-2 { background: #fff3e0; color: #e65100; }
+.seaf-3 { background: #fce4ec; color: #c2185b; }
+.seaf-4 { background: #f3e5f5; color: #6a1b9a; }
+.seaf-5 { background: #e3f2fd; color: #1565c0; }
 </style>
 {% endblock %}
 
@@ -196,7 +251,75 @@
 <!-- Cities Table -->
 <div 
     class="cities-table-container"
-    x-data="{ show: false }"
+    x-data="{
+        show: false,
+        cities: [
+            {% for city in cities %}
+            {
+                id: {{ city.id }},
+                name: '{{ city.name|escapejs }}',
+                state: '{{ city.immediate_region.intermediate_region.state.abbreviation|escapejs }}',
+                cityState: '{{ city.name|escapejs }} - {{ city.immediate_region.intermediate_region.state.abbreviation|escapejs }}',
+                seaf_category: {% if city.seaf_category is None %}null{% else %}{{ city.seaf_category }}{% endif %},
+                population: '{{ city.wiki_population|default:''|escapejs }}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        filters: {
+            cityState: '',
+            seaf_category: '',
+            population: ''
+        },
+        sortColumn: '',
+        sortDirection: 'asc',
+        
+        get filteredCities() {
+            let filtered = this.cities.filter(city => {
+                const matchCityState = !this.filters.cityState || 
+                    city.cityState.toLowerCase().includes(this.filters.cityState.toLowerCase());
+                const matchSeaf = !this.filters.seaf_category || 
+                    (city.seaf_category !== null && city.seaf_category.toString().includes(this.filters.seaf_category));
+                const matchPopulation = !this.filters.population || 
+                    city.population.toLowerCase().includes(this.filters.population.toLowerCase());
+                return matchCityState && matchSeaf && matchPopulation;
+            });
+            
+            if (this.sortColumn) {
+                filtered.sort((a, b) => {
+                    let aVal = a[this.sortColumn];
+                    let bVal = b[this.sortColumn];
+                    
+                    // Handle null/undefined values
+                    if (aVal === null || aVal === undefined) aVal = '';
+                    if (bVal === null || bVal === undefined) bVal = '';
+                    
+                    // Convert to string for comparison
+                    aVal = aVal.toString().toLowerCase();
+                    bVal = bVal.toString().toLowerCase();
+                    
+                    if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            
+            return filtered;
+        },
+        
+        sort(column) {
+            if (this.sortColumn === column) {
+                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortColumn = column;
+                this.sortDirection = 'asc';
+            }
+        },
+        
+        getSortIcon(column) {
+            if (this.sortColumn !== column) return 'fa-sort';
+            return this.sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+        }
+    }"
     x-init="setTimeout(() => show = true, 200)"
     x-show="show"
     x-transition:enter="transition ease-out duration-500"
@@ -204,29 +327,83 @@
     x-transition:enter-end="opacity-100 transform translate-y-0"
 >
     {% if cities %}
+        <div class="results-count">
+            <span x-text="`Exibindo ${filteredCities.length} de ${cities.length} municípios`"></span>
+        </div>
         <table class="cities-table">
             <thead>
                 <tr>
-                    <th><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Nome</th>
-                    <th><i class="fas fa-flag" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Estado</th>
-                    <th><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>População</th>
+                    <th class="sortable" @click="sort('cityState')">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Município - UF</span>
+                            <i class="fas sort-icon" :class="getSortIcon('cityState')"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            class="filter-input" 
+                            placeholder="Filtrar por município ou UF..."
+                            x-model="filters.cityState"
+                            @click.stop
+                        >
+                    </th>
+                    <th class="sortable" @click="sort('seaf_category')">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fas fa-layer-group" style="margin-right: 0.5rem; color: var(--teal-2);"></i>SEAF</span>
+                            <i class="fas sort-icon" :class="getSortIcon('seaf_category')"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            class="filter-input" 
+                            placeholder="Filtrar por categoria..."
+                            x-model="filters.seaf_category"
+                            @click.stop
+                        >
+                    </th>
+                    <th class="sortable" @click="sort('population')">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>População</span>
+                            <i class="fas sort-icon" :class="getSortIcon('population')"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            class="filter-input" 
+                            placeholder="Filtrar por população..."
+                            x-model="filters.population"
+                            @click.stop
+                        >
+                    </th>
                     <th style="text-align: center;"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                {% for city in cities %}
-                <tr>
-                    <td><strong>{{ city.name }}</strong></td>
-                    <td>{{ city.state }}</td>
-                    <td>{{ city.population|default:"N/A" }}</td>
-                    <td style="text-align: center;">
-                        <a href="{% url 'cities:edit_city' city.id %}" class="btn-edit">
-                            <i class="fas fa-edit"></i>
-                            <span>Editar</span>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
+                <template x-for="city in filteredCities" :key="city.id">
+                    <tr>
+                        <td><strong x-text="city.cityState"></strong></td>
+                        <td>
+                            <template x-if="city.seaf_category !== null && city.seaf_category !== undefined">
+                                <span class="seaf-badge" :class="`seaf-${city.seaf_category}`" x-text="`Categoria ${city.seaf_category}`"></span>
+                            </template>
+                            <template x-if="city.seaf_category === null || city.seaf_category === undefined">
+                                <span style="color: var(--text-secondary);">N/A</span>
+                            </template>
+                        </td>
+                        <td x-text="city.population || 'N/A'"></td>
+                        <td style="text-align: center;">
+                            <a :href="`{% url 'cities:edit_city' 0 %}`.replace('0', city.id)" class="btn-edit">
+                                <i class="fas fa-edit"></i>
+                                <span>Editar</span>
+                            </a>
+                        </td>
+                    </tr>
+                </template>
+                <template x-if="filteredCities.length === 0">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                            <i class="fas fa-search" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+                            Nenhum município encontrado com os filtros aplicados
+                        </td>
+                    </tr>
+                </template>
             </tbody>
         </table>
     {% else %}

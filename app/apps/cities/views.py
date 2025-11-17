@@ -16,6 +16,11 @@ class CityListView(LoginRequiredMixin, ViewPermissionMixin, ListView):
     context_object_name = 'cities'
     resource_name = 'cities.city'
     permission_type = 'view'
+    
+    def get_queryset(self):
+        return Municipality.objects.select_related(
+            'immediate_region__intermediate_region__state'
+        ).all()
 
 
 @download_permission_required('cities.city')

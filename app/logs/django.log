@@ -129,3 +129,39 @@ WARNING 2025-11-17 14:12:43,311 basehttp 11 140626045938488 "GET /.well-known/ap
 WARNING 2025-11-17 14:12:48,155 basehttp 11 140626049121080 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-17 14:12:48,182 basehttp 11 140626049121080 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
 WARNING 2025-11-17 14:12:48,927 basehttp 11 140626049121080 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3293
+ERROR 2025-11-17 14:56:14,824 log 11 140626049121080 Internal Server Error: /cities/api/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 64, in city_api
+    from apps.auth.models import UserPermission, GroupPermission, UserGroup
+ImportError: cannot import name 'GroupPermission' from 'apps.auth.models' (/app/apps/auth/models.py)
+ERROR 2025-11-17 14:56:14,826 basehttp 11 140626049121080 "GET /cities/api/ HTTP/1.1" 500 63609
+ERROR 2025-11-17 14:56:24,118 log 11 140626049121080 Internal Server Error: /cities/api/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 64, in city_api
+    from apps.auth.models import UserPermission, GroupPermission, UserGroup
+ImportError: cannot import name 'GroupPermission' from 'apps.auth.models' (/app/apps/auth/models.py)
+ERROR 2025-11-17 14:56:24,119 basehttp 11 140626049121080 "GET /cities/api/ HTTP/1.1" 500 63609
+ERROR 2025-11-17 17:19:14,605 log 989 140666973072184 Internal Server Error: /cities/api/
+Traceback (most recent call last):
+  File "/py/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/py/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/apps/cities/views.py", line 69, in city_api
+    from apps.auth.models import UserPermission, GroupPermission, UserGroup
+ImportError: cannot import name 'GroupPermission' from 'apps.auth.models' (/app/apps/auth/models.py)
+ERROR 2025-11-17 17:19:14,606 basehttp 989 140666973072184 "GET /cities/api/ HTTP/1.1" 500 63346
