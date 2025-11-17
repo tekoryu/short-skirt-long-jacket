@@ -61,7 +61,7 @@
                     :aria-expanded="userMenuOpen"
                 >
                     <i class="fas fa-user-circle"></i>
-                    <span class="user-name">Admin</span>
+                    <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
                     <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': userMenuOpen }"></i>
                 </button>
                 

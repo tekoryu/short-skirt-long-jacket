@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Region, State, IntermediateRegion, ImmediateRegion, Municipality
+from .models import Region, State, IntermediateRegion, ImmediateRegion, Municipality, MunicipalityLog
 
 
 @admin.register(Region)
@@ -73,7 +73,7 @@ class MunicipalityAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Wikipedia - Mayor Information', {
-            'fields': ('wiki_mayor_name', 'wiki_mayor_party', 'wiki_mayor_mandate_start', 'wiki_mayor_mandate_end'),
+            'fields': ('wiki_mayor_mandate_start', 'wiki_mayor_mandate_end'),
             'classes': ('collapse',)
         }),
         ('Wikipedia - Other', {
@@ -91,3 +91,39 @@ class MunicipalityAdmin(admin.ModelAdmin):
             return f"{obj.mayor_mandate_start}-{obj.mayor_mandate_end}"
         return "-"
     mayor_mandate_period.short_description = 'Mandate Period'
+
+
+@admin.register(MunicipalityLog)
+class MunicipalityLogAdmin(admin.ModelAdmin):
+    """
+    This class is responsible for displaying municipality change logs in Django admin (read-only).
+    """
+    list_display = ['municipality', 'user', 'action', 'field_name', 'created_at']
+    list_filter = ['action', 'created_at', 'user']
+    search_fields = ['municipality__name', 'user__email', 'field_name', 'old_value', 'new_value']
+    ordering = ['-created_at']
+    readonly_fields = ['municipality', 'user', 'action', 'field_name', 'old_value', 'new_value', 'ip_address', 'user_agent', 'created_at']
+    
+    fieldsets = (
+        ('Informações Gerais', {
+            'fields': ('municipality', 'user', 'action', 'created_at')
+        }),
+        ('Alteração', {
+            'fields': ('field_name', 'old_value', 'new_value')
+        }),
+        ('Auditoria', {
+            'fields': ('ip_address', 'user_agent')
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('municipality', 'user')

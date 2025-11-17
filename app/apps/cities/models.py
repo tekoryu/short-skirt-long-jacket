@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Region(models.Model):
@@ -102,8 +103,6 @@ class Municipality(models.Model):
     wiki_council_members = models.CharField(max_length=50, null=True, blank=True, verbose_name="Council Members (Wikipedia)")
     wiki_postal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name="Postal Code (Wikipedia)")
     wiki_gini = models.CharField(max_length=100, null=True, blank=True, verbose_name="Gini Coefficient (Wikipedia)")
-    wiki_mayor_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mayor Name (Wikipedia)")
-    wiki_mayor_party = models.CharField(max_length=50, null=True, blank=True, verbose_name="Mayor Party (Wikipedia)")
     wiki_mayor_mandate_start = models.IntegerField(null=True, blank=True, verbose_name="Mayor Mandate Start (Wikipedia)")
     wiki_mayor_mandate_end = models.IntegerField(null=True, blank=True, verbose_name="Mayor Mandate End (Wikipedia)")
     wiki_data_updated_at = models.DateTimeField(null=True, blank=True, verbose_name="Wikipedia Data Updated At")
@@ -122,3 +121,30 @@ class Municipality(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.immediate_region.intermediate_region.state.name}"
+
+
+class MunicipalityLog(models.Model):
+    """
+    This class is responsible for logging all changes made to municipalities for audit purposes.
+    """
+    municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, related_name='change_logs', verbose_name="Município")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name="Usuário")
+    action = models.CharField(max_length=50, verbose_name="Ação")
+    field_name = models.CharField(max_length=100, blank=True, verbose_name="Campo")
+    old_value = models.TextField(blank=True, verbose_name="Valor Anterior")
+    new_value = models.TextField(blank=True, verbose_name="Valor Novo")
+    ip_address = models.GenericIPAddressField(null=True, blank=True, verbose_name="IP")
+    user_agent = models.TextField(blank=True, verbose_name="User Agent")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data/Hora")
+    
+    class Meta:
+        verbose_name = "Log de Alteração de Município"
+        verbose_name_plural = "Logs de Alterações de Municípios"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['municipality', '-created_at']),
+            models.Index(fields=['user', '-created_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.municipality.name} - {self.action} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
