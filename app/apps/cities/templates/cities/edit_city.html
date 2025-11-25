@@ -1,0 +1,595 @@
+{% extends "core/base.html" %}
+
+{% block title %}Editar Município - SEAG Digital{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Edit City Specific Styles */
+.edit-header {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal-1), var(--teal-2), var(--teal-3));
+}
+
+.form-container {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.form-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-section-title i {
+    color: var(--primary-color);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #e74c3c;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(12, 171, 168, 0.1);
+}
+
+.form-help {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(12, 171, 168, 0.03);
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--teal-2), var(--teal-3));
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.logs-section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.logs-header {
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, rgba(12, 171, 168, 0.05), rgba(0, 143, 140, 0.05));
+    border-bottom: 2px solid var(--border-color);
+}
+
+.logs-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logs-list {
+    padding: 1.5rem 2rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    padding: 1rem;
+    border-left: 3px solid var(--primary-color);
+    background: rgba(12, 171, 168, 0.03);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.log-entry:last-child {
+    margin-bottom: 0;
+}
+
+.log-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.log-user {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.log-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.log-change {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.log-change strong {
+    color: var(--primary-color);
+}
+
+.log-values {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.log-value {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.log-value-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 80px;
+}
+
+.log-value-text {
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+.empty-logs {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.messages {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.message {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-md);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.message.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Messages -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">
+        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-times-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Page Header -->
+<div 
+    class="edit-header"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 100)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+        <i class="fas fa-edit" style="font-size: 2rem; color: var(--primary-color);"></i>
+        <div>
+            <h2 style="margin: 0;">Editar Município</h2>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                <strong>{{ municipality.name }}</strong> - {{ municipality.immediate_region.intermediate_region.state.name }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Form -->
+<form method="post" 
+    class="form-container"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 150)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    {% csrf_token %}
+    
+    <!-- SEAF Information -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-layer-group"></i>
+            Classificação SEAF
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_seaf_category">{{ form.seaf_category.label }}</label>
+                {{ form.seaf_category }}
+                <span class="form-help">Categoria do Sistema Estadual de Apoio e Fomento</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mayor Information -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-user-tie"></i>
+            Informações do Prefeito
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_mayor_name">{{ form.mayor_name.label }}</label>
+                {{ form.mayor_name }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_mayor_party">{{ form.mayor_party.label }}</label>
+                {{ form.mayor_party }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_mayor_mandate_start">{{ form.mayor_mandate_start.label }}</label>
+                {{ form.mayor_mandate_start }}
+                {% if form.mayor_mandate_start.help_text %}
+                <span class="form-help">{{ form.mayor_mandate_start.help_text }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_mayor_mandate_end">{{ form.mayor_mandate_end.label }}</label>
+                {{ form.mayor_mandate_end }}
+                {% if form.mayor_mandate_end.help_text %}
+                <span class="form-help">{{ form.mayor_mandate_end.help_text }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Basic Municipal Data -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-info-circle"></i>
+            Dados Básicos
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_demonym">{{ form.wiki_demonym.label }}</label>
+                {{ form.wiki_demonym }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_altitude">{{ form.wiki_altitude.label }}</label>
+                {{ form.wiki_altitude }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_total_area">{{ form.wiki_total_area.label }}</label>
+                {{ form.wiki_total_area }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_population">{{ form.wiki_population.label }}</label>
+                {{ form.wiki_population }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_density">{{ form.wiki_density.label }}</label>
+                {{ form.wiki_density }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_climate">{{ form.wiki_climate.label }}</label>
+                {{ form.wiki_climate }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Geographic Data -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map-marked-alt"></i>
+            Dados Geográficos
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_metropolitan_region">{{ form.wiki_metropolitan_region.label }}</label>
+                {{ form.wiki_metropolitan_region }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_distance_to_capital">{{ form.wiki_distance_to_capital.label }}</label>
+                {{ form.wiki_distance_to_capital }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_foundation_date">{{ form.wiki_foundation_date.label }}</label>
+                {{ form.wiki_foundation_date }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_postal_code">{{ form.wiki_postal_code.label }}</label>
+                {{ form.wiki_postal_code }}
+            </div>
+            <div class="form-group full-width">
+                <label class="form-label" for="id_wiki_bordering_municipalities">{{ form.wiki_bordering_municipalities.label }}</label>
+                {{ form.wiki_bordering_municipalities }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Economic & Social Data -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-chart-line"></i>
+            Dados Econômicos e Sociais
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_idh">{{ form.wiki_idh.label }}</label>
+                {{ form.wiki_idh }}
+                {% if form.wiki_idh.help_text %}
+                <span class="form-help">{{ form.wiki_idh.help_text }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_gini">{{ form.wiki_gini.label }}</label>
+                {{ form.wiki_gini }}
+                {% if form.wiki_gini.help_text %}
+                <span class="form-help">{{ form.wiki_gini.help_text }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_gdp">{{ form.wiki_gdp.label }}</label>
+                {{ form.wiki_gdp }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_gdp_per_capita">{{ form.wiki_gdp_per_capita.label }}</label>
+                {{ form.wiki_gdp_per_capita }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Administrative Data -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-building"></i>
+            Dados Administrativos
+        </h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_council_members">{{ form.wiki_council_members.label }}</label>
+                {{ form.wiki_council_members }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_wiki_website">{{ form.wiki_website.label }}</label>
+                {{ form.wiki_website }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <a href="{% url 'cities:city_list' %}" class="btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancelar
+        </a>
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i>
+            Salvar Alterações
+        </button>
+    </div>
+</form>
+
+<!-- Change History -->
+<div 
+    class="logs-section"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 250)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <div class="logs-header">
+        <h3>
+            <i class="fas fa-history"></i>
+            Histórico de Alterações (últimas 20)
+        </h3>
+    </div>
+    <div class="logs-list">
+        {% if recent_logs %}
+            {% for log in recent_logs %}
+            <div class="log-entry">
+                <div class="log-meta">
+                    <span class="log-user">
+                        <i class="fas fa-user"></i>
+                        {% if log.user %}{{ log.user.email }}{% else %}Sistema{% endif %}
+                    </span>
+                    <span class="log-date">
+                        <i class="fas fa-clock"></i>
+                        {{ log.created_at|date:"d/m/Y H:i:s" }}
+                    </span>
+                </div>
+                <div class="log-change">
+                    <strong>{{ log.field_name }}</strong> alterado
+                </div>
+                {% if log.old_value or log.new_value %}
+                <div class="log-values">
+                    {% if log.old_value %}
+                    <div class="log-value">
+                        <span class="log-value-label">Anterior:</span>
+                        <span class="log-value-text">{{ log.old_value|default:"(vazio)" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if log.new_value %}
+                    <div class="log-value">
+                        <span class="log-value-label">Novo:</span>
+                        <span class="log-value-text">{{ log.new_value|default:"(vazio)" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-logs">
+                <i class="fas fa-history" style="font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; display: block;"></i>
+                <p>Nenhuma alteração registrada ainda.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,86 @@
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEV: ${DEV}
+        USE_PROXY: ${USE_PROXY:-false}
+        HTTP_PROXY_URL: ${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+    expose:
+      - "8000"
+    volumes:
+      - ./app:/app
+      - ./app/logs:/vol/web/logs
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
+    environment:
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - STATIC_ROOT=${STATIC_ROOT}
+      - MEDIA_ROOT=${MEDIA_ROOT}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - HTTP_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - HTTPS_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - http_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - https_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+      - NO_PROXY=localhost,127.0.0.1,db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.seaf.entrypoints=http"
+      - "traefik.http.routers.seaf.rule=Host(`seaf.cenariodigital.dev`)"
+      - "traefik.http.middlewares.seaf-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.seaf.middlewares=seaf-https-redirect"
+      - "traefik.http.routers.seaf-secure.entrypoints=https"
+      - "traefik.http.routers.seaf-secure.rule=Host(`seaf.cenariodigital.dev`)"
+      - "traefik.http.routers.seaf-secure.tls=true"
+      - "traefik.http.routers.seaf-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.seaf-secure.service=seaf"
+      - "traefik.http.services.seaf.loadbalancer.server.port=8000"
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  traefik-public:
+    external: true

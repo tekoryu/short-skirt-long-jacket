@@ -82,14 +82,15 @@ app/
 - `Municipality` - Brazilian municipalities
 
 **IBGE Data Integration:**
-- Management commands for data import/export
-- CSV processing with batch operations
-- Data validation and error handling
-- Dry-run capabilities for testing
+- Django fixtures for initial data (regions, states, municipalities)
+- Automatic loading on first startup
+- Manual fixture management commands
+- Fixture dump/restore for database state management
 
-**Management Commands:**
-- `import_ibge_data` - Import from CSV with batch processing
-- `clear_ibge_data` - Clear all geographic data with confirmation
+**Data Management:**
+- `load_initial_data` - Load all initial fixtures (cities + auth)
+- `dumpdata` - Export current database state to fixtures
+- `loaddata` - Import fixtures into database
 
 ### 3. Core Application (`apps/core/`)
 
@@ -118,7 +119,7 @@ app/
 - **PostgreSQL** with health checks
 - **Connection pooling** via psycopg2
 - **Migration management** with Django ORM
-- **Data seeding** via management commands
+- **Data seeding** via Django fixtures (automatic on first run)
 
 ### Static File Management
 - **Collectstatic** for production builds
@@ -203,10 +204,11 @@ def my_view(request):
 
 ## Testing Strategy
 
-### Management Commands
-- **Dry-run** options for safe testing
-- **Batch processing** with configurable sizes
-- **Error handling** and logging
+### Fixtures & Data Management
+- **Fixture loading** for initial database state
+- **Automatic detection** of empty database
+- **Selective loading** (cities-only or auth-only)
+- **Fixture dumping** to capture current state
 - **Statistics reporting** for data validation
 
 ### Database Testing
@@ -228,7 +230,7 @@ def my_view(request):
 - **Django development** server
 - **Live reloading** via volume mounting
 - **Debug mode** with detailed error pages
-- **Database seeding** via management commands
+- **Database seeding** via fixtures (automatic on startup)
 
 ## Common Development Tasks
 
@@ -250,10 +252,11 @@ def my_view(request):
 5. Create management commands for bulk operations
 
 ### Data Import/Export
-1. Create management command class
-2. Add argument parsing for options
-3. Implement batch processing for large datasets
-4. Add error handling and logging
+1. Use `dumpdata` to export current database state to fixtures
+2. Store fixtures in `app/fixtures/` directory
+3. Use `loaddata` or `load_initial_data` to import fixtures
+4. Update fixtures when database schema/data changes
+5. Version control fixtures for reproducible deployments
 5. Include dry-run capabilities
 6. Test with sample data
 

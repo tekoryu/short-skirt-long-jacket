@@ -60,19 +60,26 @@ else
     echo "Assuming services are already running."
 fi
 
-echo "Running post-startup commands..."
-docker compose run --rm app sh -c "python manage.py createsuperuser --noinput"
-
-echo "Running migrations..."
-docker compose run --rm app sh -c "python manage.py migrate"
-
-echo "Collecting static files..."
-docker compose run --rm app sh -c "python manage.py collectstatic --noinput"
-
-echo "Importing IBGE data..."
-docker compose run --rm app sh -c "python manage.py import_ibge_data"
-
-echo "Finished booting up the application."
-
-echo "Opening application in browser."
+echo ""
+echo "✅ Application is ready!"
+echo ""
+echo "📦 Automatic initialization completed:"
+echo "   • Database migrations applied"
+echo "   • Static files collected"
+echo "   • Initial data loaded (if database was empty)"
+echo "   • Superuser created (if configured in .env)"
+echo ""
+echo "🔧 Useful commands:"
+echo "   docker compose logs -f app        # View application logs"
+echo "   docker compose logs -f db         # View database logs"
+echo "   docker compose down               # Stop services"
+echo "   docker compose down -v            # Stop and remove volumes"
+echo "   docker compose restart app        # Restart application"
+echo ""
+echo "📚 Documentation:"
+echo "   app/fixtures/README.md            # Fixture management"
+echo "   DEPLOYMENT.md                     # Deployment guide"
+echo "   app/COMMANDS.md                   # Available commands"
+echo ""
+echo "Opening application in browser..."
 xdg-open "http://localhost:8000" 2>/dev/null || open "http://localhost:8000" 2>/dev/null || echo "Please open http://localhost:8000 in your browser"

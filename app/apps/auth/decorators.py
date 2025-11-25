@@ -10,6 +10,88 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def check_resource_permission(user, resource_name, permission_type, region=None):
+    """
+    This function is responsible for checking if a user has permission for a specific resource/action.
+    Optionally filters by region scope. Returns True if access is granted.
+    """
+    if not user.is_authenticated:
+        return False
+    
+    # Superusers have all permissions
+    if user.is_superuser:
+        return True
+    
+    # Check direct user permissions (not region-scoped)
+    user_perms = user.custom_permissions.filter(
+        resource_permission__resource_name=resource_name,
+        resource_permission__permission_type=permission_type,
+        is_active=True
+    ).filter(
+        models.Q(expires_at__isnull=True) | models.Q(expires_at__gt=timezone.now())
+    )
+    
+    if user_perms.exists():
+        return True
+
+    # Check group permissions
+    user_groups = user.groups.values_list('id', flat=True)
+    
+    group_perms = GroupResourcePermission.objects.filter(
+        group__in=user_groups,
+        resource_permission__resource_name=resource_name,
+        resource_permission__permission_type=permission_type
+    )
+
+    if region:
+        # Filter: global (null) OR matching region
+        group_perms = group_perms.filter(
+            models.Q(region__isnull=True) | models.Q(region=region)
+        )
+
+    return group_perms.exists()
+
+
+def get_user_permitted_regions(user, resource_name, permission_type):
+    """
+    This function is responsible for returning region IDs the user can access for a resource/permission.
+    Returns None if user has global access (no region restriction).
+    """
+    if not user.is_authenticated:
+        return []
+    
+    # Superusers have global access
+    if user.is_superuser:
+        return None
+    
+    # Check direct user permissions (grants global access)
+    user_perms = user.custom_permissions.filter(
+        resource_permission__resource_name=resource_name,
+        resource_permission__permission_type=permission_type,
+        is_active=True
+    ).filter(
+        models.Q(expires_at__isnull=True) | models.Q(expires_at__gt=timezone.now())
+    )
+    
+    if user_perms.exists():
+        return None  # Global access
+    
+    user_groups = user.groups.values_list('id', flat=True)
+    
+    group_perms = GroupResourcePermission.objects.filter(
+        group__in=user_groups,
+        resource_permission__resource_name=resource_name,
+        resource_permission__permission_type=permission_type
+    )
+    
+    # If any permission has null region, user has global access
+    if group_perms.filter(region__isnull=True).exists():
+        return None
+    
+    # Return specific region IDs
+    return list(group_perms.values_list('region_id', flat=True).distinct())
+
+
 def permission_required(resource_name, permission_type='view', raise_exception=True):
     """
     This decorator is responsible for checking resource-based permissions.
@@ -22,6 +104,10 @@ def permission_required(resource_name, permission_type='view', raise_exception=T
                 if raise_exception:
                     raise PermissionDenied("Authentication required.")
                 return redirect('auth:login')
+            
+            # Superusers have all permissions
+            if request.user.is_superuser:
+                return view_func(request, *args, **kwargs)
             
             # Check direct user permissions
             user_perms = request.user.custom_permissions.filter(

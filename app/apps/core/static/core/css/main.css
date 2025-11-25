@@ -92,7 +92,20 @@ a {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.0rem;
+}
+
+.project-logo {
+    height: 4.5rem;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: transform var(--transition-speed) ease;
+}
+
+.project-title-link:hover .project-logo {
+    transform: scale(1.05);
 }
 
 .top-bar-right {

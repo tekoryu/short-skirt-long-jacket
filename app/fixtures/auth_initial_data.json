@@ -1,0 +1,391 @@
+[
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "Region - Centro-Oeste",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "Region - Norte",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 3,
+  "fields": {
+    "name": "Region - Nordeste",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 4,
+  "fields": {
+    "name": "Region - Sul",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 5,
+  "fields": {
+    "name": "Region - Sudeste",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 6,
+  "fields": {
+    "name": "Cities - Global Access",
+    "permissions": []
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 1,
+  "fields": {
+    "name": "View Municipality",
+    "codename": "view_cities_municipality",
+    "permission_type": "view",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.272Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 2,
+  "fields": {
+    "name": "Add Municipality",
+    "codename": "add_cities_municipality",
+    "permission_type": "add",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.281Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 3,
+  "fields": {
+    "name": "Change Municipality",
+    "codename": "change_cities_municipality",
+    "permission_type": "change",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.286Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 4,
+  "fields": {
+    "name": "Delete Municipality",
+    "codename": "delete_cities_municipality",
+    "permission_type": "delete",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.291Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 5,
+  "fields": {
+    "name": "Download Municipality",
+    "codename": "download_cities_municipality",
+    "permission_type": "download",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.297Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 6,
+  "fields": {
+    "name": "Export Municipality",
+    "codename": "export_cities_municipality",
+    "permission_type": "export",
+    "resource_name": "cities.municipality",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:09:06.302Z"
+  }
+},
+{
+  "model": "custom_auth.resourcepermission",
+  "pk": 7,
+  "fields": {
+    "name": "",
+    "codename": "",
+    "permission_type": "view",
+    "resource_name": "cities.city",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-11-25T19:29:48.832Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 1,
+  "fields": {
+    "group": 1,
+    "resource_permission": 1,
+    "region": 5,
+    "created_at": "2025-11-25T19:09:50.014Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 2,
+  "fields": {
+    "group": 1,
+    "resource_permission": 3,
+    "region": 5,
+    "created_at": "2025-11-25T19:09:50.019Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 3,
+  "fields": {
+    "group": 1,
+    "resource_permission": 2,
+    "region": 5,
+    "created_at": "2025-11-25T19:09:50.021Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 4,
+  "fields": {
+    "group": 1,
+    "resource_permission": 4,
+    "region": 5,
+    "created_at": "2025-11-25T19:09:50.024Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 5,
+  "fields": {
+    "group": 2,
+    "resource_permission": 1,
+    "region": 1,
+    "created_at": "2025-11-25T19:09:50.027Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 6,
+  "fields": {
+    "group": 2,
+    "resource_permission": 3,
+    "region": 1,
+    "created_at": "2025-11-25T19:09:50.030Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 7,
+  "fields": {
+    "group": 2,
+    "resource_permission": 2,
+    "region": 1,
+    "created_at": "2025-11-25T19:09:50.034Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 8,
+  "fields": {
+    "group": 2,
+    "resource_permission": 4,
+    "region": 1,
+    "created_at": "2025-11-25T19:09:50.037Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 9,
+  "fields": {
+    "group": 3,
+    "resource_permission": 1,
+    "region": 2,
+    "created_at": "2025-11-25T19:09:50.041Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 10,
+  "fields": {
+    "group": 3,
+    "resource_permission": 3,
+    "region": 2,
+    "created_at": "2025-11-25T19:09:50.044Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 11,
+  "fields": {
+    "group": 3,
+    "resource_permission": 2,
+    "region": 2,
+    "created_at": "2025-11-25T19:09:50.047Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 12,
+  "fields": {
+    "group": 3,
+    "resource_permission": 4,
+    "region": 2,
+    "created_at": "2025-11-25T19:09:50.050Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 13,
+  "fields": {
+    "group": 4,
+    "resource_permission": 1,
+    "region": 4,
+    "created_at": "2025-11-25T19:09:50.055Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 14,
+  "fields": {
+    "group": 4,
+    "resource_permission": 3,
+    "region": 4,
+    "created_at": "2025-11-25T19:09:50.058Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 15,
+  "fields": {
+    "group": 4,
+    "resource_permission": 2,
+    "region": 4,
+    "created_at": "2025-11-25T19:09:50.061Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 16,
+  "fields": {
+    "group": 4,
+    "resource_permission": 4,
+    "region": 4,
+    "created_at": "2025-11-25T19:09:50.065Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 17,
+  "fields": {
+    "group": 5,
+    "resource_permission": 1,
+    "region": 3,
+    "created_at": "2025-11-25T19:09:50.069Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 18,
+  "fields": {
+    "group": 5,
+    "resource_permission": 3,
+    "region": 3,
+    "created_at": "2025-11-25T19:09:50.072Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 19,
+  "fields": {
+    "group": 5,
+    "resource_permission": 2,
+    "region": 3,
+    "created_at": "2025-11-25T19:09:50.075Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 20,
+  "fields": {
+    "group": 5,
+    "resource_permission": 4,
+    "region": 3,
+    "created_at": "2025-11-25T19:09:50.077Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 21,
+  "fields": {
+    "group": 6,
+    "resource_permission": 1,
+    "region": null,
+    "created_at": "2025-11-25T19:09:50.082Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 22,
+  "fields": {
+    "group": 6,
+    "resource_permission": 3,
+    "region": null,
+    "created_at": "2025-11-25T19:09:50.084Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 23,
+  "fields": {
+    "group": 6,
+    "resource_permission": 2,
+    "region": null,
+    "created_at": "2025-11-25T19:09:50.088Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 24,
+  "fields": {
+    "group": 6,
+    "resource_permission": 4,
+    "region": null,
+    "created_at": "2025-11-25T19:09:50.090Z"
+  }
+},
+{
+  "model": "custom_auth.groupresourcepermission",
+  "pk": 25,
+  "fields": {
+    "group": 6,
+    "resource_permission": 7,
+    "region": null,
+    "created_at": "2025-11-25T19:29:59.238Z"
+  }
+}
+]
