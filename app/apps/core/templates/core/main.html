@@ -334,10 +334,10 @@
             title: 'Mapa Coroplético - Classificação SEAF por Estado (Média)'
         },
         colors: {
-            0: '#fee5d9',
-            1: '#fc9272',
+            1: '#a50f15',
             2: '#fb6a4a',
-            3: '#a50f15',
+            3: '#fc9272',
+            4: '#fee5d9',
             null: '#cccccc'
         }
     };
@@ -491,8 +491,8 @@
     
     function onEachFeature(feature, layer, view) {
         const code = feature.properties.codarea;
-        const name = feature.properties.nome || 'Desconhecido';
         const seafInfo = seafData[code];
+        const name = seafInfo?.name || feature.properties.nome || 'Desconhecido';
         
         let tooltipContent;
         if (view === 'states') {
@@ -504,9 +504,13 @@
                 `Total de Municípios: ${totalMunicipalities}`;
         } else {
             const seafCategory = seafInfo?.seaf_category !== undefined ? seafInfo.seaf_category : 'Sem dados';
+            const mayorName = seafInfo?.mayor_name || 'Não informado';
+            const mayorParty = seafInfo?.mayor_party;
+            
             tooltipContent = 
                 `<strong>${name}</strong><br/>` +
-                `Categoria SEAF: ${seafCategory}`;
+                `Categoria SEAF: ${seafCategory}<br/>` +
+                `Prefeito: ${mayorName}${mayorParty ? ' (' + mayorParty + ')' : ''}`;
         }
         
         // Bind tooltip
@@ -536,7 +540,7 @@
             div.innerHTML = '<h4>Categoria SEAF</h4>';
             
             // Add category items
-            for (let i = 0; i <= 3; i++) {
+            for (let i = 1; i <= 4; i++) {
                 div.innerHTML += 
                     `<div class="legend-item">
                         <span class="legend-color" style="background: ${CONFIG.colors[i]}"></span>

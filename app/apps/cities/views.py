@@ -255,13 +255,15 @@ def seaf_data_api(request):
     """
     municipalities = Municipality.objects.filter(
         seaf_category__isnull=False
-    ).values('code', 'name', 'seaf_category')
+    ).values('code', 'name', 'seaf_category', 'mayor_name', 'mayor_party')
     
     # Create a dictionary mapping IBGE code to SEAF category
     data = {
         municipality['code']: {
             'name': municipality['name'],
-            'seaf_category': municipality['seaf_category']
+            'seaf_category': municipality['seaf_category'],
+            'mayor_name': municipality['mayor_name'],
+            'mayor_party': municipality['mayor_party']
         }
         for municipality in municipalities
     }

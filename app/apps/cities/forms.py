@@ -11,10 +11,10 @@ class MunicipalityEditForm(forms.ModelForm):
         label='Categoria SEAF',
         choices=[
             ('', '---------'),
-            (0, 'Categoria 0'),
             (1, 'Categoria 1'),
             (2, 'Categoria 2'),
             (3, 'Categoria 3'),
+            (4, 'Categoria 4'),
         ],
         coerce=lambda x: int(x) if x else None,
         required=False,

@@ -195,12 +195,10 @@
     font-weight: 600;
 }
 
-.seaf-0 { background: #e0e0e0; color: #424242; }
-.seaf-1 { background: #e8f5e9; color: #2e7d32; }
-.seaf-2 { background: #fff3e0; color: #e65100; }
-.seaf-3 { background: #fce4ec; color: #c2185b; }
-.seaf-4 { background: #f3e5f5; color: #6a1b9a; }
-.seaf-5 { background: #e3f2fd; color: #1565c0; }
+.seaf-1 { background: #a50f15; color: #ffffff; }
+.seaf-2 { background: #fb6a4a; color: #ffffff; }
+.seaf-3 { background: #fc9272; color: #ffffff; }
+.seaf-4 { background: #fee5d9; color: #333333; }
 
 .search-input {
     width: 100%;
@@ -424,10 +422,10 @@
             </label>
             <select name="seaf_category" class="filter-select" onchange="this.form.submit()">
                 <option value="">Todas</option>
-                <option value="0" {% if seaf_category == '0' %}selected{% endif %}>Categoria 0</option>
                 <option value="1" {% if seaf_category == '1' %}selected{% endif %}>Categoria 1</option>
                 <option value="2" {% if seaf_category == '2' %}selected{% endif %}>Categoria 2</option>
                 <option value="3" {% if seaf_category == '3' %}selected{% endif %}>Categoria 3</option>
+                <option value="4" {% if seaf_category == '4' %}selected{% endif %}>Categoria 4</option>
                 <option value="null" {% if seaf_category == 'null' %}selected{% endif %}>N/A</option>
             </select>
         </div>
