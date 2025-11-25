@@ -16,9 +16,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+# Project root directory
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$PROJECT_ROOT"
 
 # Functions
 print_info() {
@@ -39,8 +39,8 @@ print_error() {
 
 # Check if .env file exists
 check_env_file() {
-    if [ ! -f ../.env ]; then
-        print_error ".env file not found!"
+    if [ ! -f .env ]; then
+        print_error ".env file not found in project root!"
         print_info "Please copy .env.production to .env and configure it with production values"
         print_info "Command: cp .env.production .env"
         exit 1
