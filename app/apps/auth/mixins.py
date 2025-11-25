@@ -42,14 +42,15 @@ class PermissionRequiredMixin:
         
         return False
     
-    def check_resource_permission(self, resource_name, permission_type):
+    def check_resource_permission(self, resource_name, permission_type, region=None):
         """
         This method is responsible for checking if user has permission for specific resource and action.
         Checks both direct user permissions and group permissions via Django's built-in Group model.
+        Optionally filters by region scope.
         """
         user = self.request.user
         
-        # Check direct user permissions
+        # Check direct user permissions (not region-scoped)
         user_perms = user.custom_permissions.filter(
             resource_permission__resource_name=resource_name,
             resource_permission__permission_type=permission_type,
@@ -62,8 +63,6 @@ class PermissionRequiredMixin:
         )
         
         if active_user_perms.exists():
-            # Don't log successful accesses to prevent database bloat
-            # Only log in application-level logging if needed
             logger.debug(f"User {user.email} accessed {resource_name} with {permission_type}")
             return True
 
@@ -76,14 +75,53 @@ class PermissionRequiredMixin:
             resource_permission__permission_type=permission_type
         )
 
+        if region:
+            # Filter: global (null) OR matching region
+            group_perms = group_perms.filter(
+                models.Q(region__isnull=True) | models.Q(region=region)
+            )
+
         if group_perms.exists():
-            # Don't log successful accesses to prevent database bloat
             logger.debug(f"User {user.email} accessed {resource_name} with {permission_type} via group")
             return True
 
         # Only log access denials to the database for security auditing
         self.log_permission_access(resource_name, permission_type, False)
         return False
+    
+    def get_user_permitted_regions(self, resource_name, permission_type):
+        """
+        This method is responsible for returning all regions a user has access to for a resource/permission.
+        Returns None if user has global access (no region restriction).
+        """
+        user = self.request.user
+        
+        # Check direct user permissions (grants global access)
+        user_perms = user.custom_permissions.filter(
+            resource_permission__resource_name=resource_name,
+            resource_permission__permission_type=permission_type,
+            is_active=True
+        ).filter(
+            models.Q(expires_at__isnull=True) | models.Q(expires_at__gt=timezone.now())
+        )
+        
+        if user_perms.exists():
+            return None  # Global access
+        
+        user_groups = user.groups.values_list('id', flat=True)
+        
+        group_perms = GroupResourcePermission.objects.filter(
+            group__in=user_groups,
+            resource_permission__resource_name=resource_name,
+            resource_permission__permission_type=permission_type
+        )
+        
+        # If any permission has null region, user has global access
+        if group_perms.filter(region__isnull=True).exists():
+            return None
+        
+        # Return specific regions
+        return list(group_perms.values_list('region_id', flat=True).distinct())
     
     def log_permission_access(self, resource_name, permission_type, granted):
         """

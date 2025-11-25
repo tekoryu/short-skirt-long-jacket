@@ -10,6 +10,33 @@ from .models import (
 )
 
 
+# Unregister default Group admin to customize it
+admin.site.unregister(Group)
+
+
+@admin.register(Group)
+class CustomGroupAdmin(BaseGroupAdmin):
+    """
+    This class is responsible for extending Django's GroupAdmin with user management.
+    """
+    list_display = ('name', 'user_count')
+    filter_horizontal = ('permissions',)
+    
+    def user_count(self, obj):
+        return obj.user_set.count()
+    user_count.short_description = 'Users'
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        return form
+    
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        group = Group.objects.get(pk=object_id)
+        extra_context['group_users'] = group.user_set.all()
+        return super().change_view(request, object_id, form_url, extra_context)
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     """
@@ -81,13 +108,19 @@ class GroupResourcePermissionAdmin(admin.ModelAdmin):
     """
     This class is responsible for managing group resource permission assignments in the admin interface.
     """
-    list_display = ('group', 'resource_permission', 'created_at')
-    list_filter = ('created_at', 'resource_permission__permission_type')
-    search_fields = ('group__name', 'resource_permission__name')
-    ordering = ('group__name', 'resource_permission__resource_name')
+    list_display = ('group', 'resource_permission', 'region_display', 'created_at')
+    list_filter = ('created_at', 'resource_permission__permission_type', 'region')
+    search_fields = ('group__name', 'resource_permission__name', 'region__name')
+    ordering = ('group__name', 'resource_permission__resource_name', 'region__name')
+    autocomplete_fields = ['region']
+    
+    def region_display(self, obj):
+        return obj.region.name if obj.region else "GLOBAL"
+    region_display.short_description = "Region Scope"
+    region_display.admin_order_field = "region__name"
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('group', 'resource_permission')
+        return super().get_queryset(request).select_related('group', 'resource_permission', 'region')
 
 
 @admin.register(PermissionLog)

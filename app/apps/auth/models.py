@@ -85,19 +85,29 @@ class UserPermission(models.Model):
 class GroupResourcePermission(models.Model):
     """
     This class is responsible for linking Django's built-in Group model to resource permissions.
+    Optionally scoped to a specific region (null = access to all regions).
     """
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='resource_permissions')
     resource_permission = models.ForeignKey(ResourcePermission, on_delete=models.CASCADE)
+    region = models.ForeignKey(
+        'cities.Region',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='group_permissions',
+        help_text="If set, permission applies only to this region. If null, applies to all regions."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         db_table = 'auth_group_resource_permission'
         verbose_name = 'Group-Permission Assignment'
         verbose_name_plural = 'Group-Permission Assignments'
-        unique_together = ['group', 'resource_permission']
+        unique_together = ['group', 'resource_permission', 'region']
     
     def __str__(self):
-        return f"{self.group.name} - {self.resource_permission}"
+        region_str = f" [{self.region.name}]" if self.region else " [ALL]"
+        return f"{self.group.name} - {self.resource_permission}{region_str}"
 
 
 class PermissionLog(models.Model):

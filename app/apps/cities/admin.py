@@ -1,9 +1,11 @@
 from django.contrib import admin
+
+from .mixins import RegionScopedAdminMixin
 from .models import Region, State, IntermediateRegion, ImmediateRegion, Municipality
 
 
 @admin.register(Region)
-class RegionAdmin(admin.ModelAdmin):
+class RegionAdmin(RegionScopedAdminMixin, admin.ModelAdmin):
     list_display = ['code', 'name', 'state_count']
     search_fields = ['code', 'name']
     ordering = ['name']
@@ -14,7 +16,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 
 @admin.register(State)
-class StateAdmin(admin.ModelAdmin):
+class StateAdmin(RegionScopedAdminMixin, admin.ModelAdmin):
     list_display = ['code', 'abbreviation', 'name', 'region', 'latitude', 'longitude']
     search_fields = ['code', 'abbreviation', 'name', 'region__name']
     list_filter = ['region']
@@ -22,7 +24,7 @@ class StateAdmin(admin.ModelAdmin):
 
 
 @admin.register(IntermediateRegion)
-class IntermediateRegionAdmin(admin.ModelAdmin):
+class IntermediateRegionAdmin(RegionScopedAdminMixin, admin.ModelAdmin):
     list_display = ['code', 'name', 'state']
     list_filter = ['state']
     search_fields = ['code', 'name', 'state__name']
@@ -30,7 +32,7 @@ class IntermediateRegionAdmin(admin.ModelAdmin):
 
 
 @admin.register(ImmediateRegion)
-class ImmediateRegionAdmin(admin.ModelAdmin):
+class ImmediateRegionAdmin(RegionScopedAdminMixin, admin.ModelAdmin):
     list_display = ['code', 'name', 'intermediate_region', 'state_name']
     list_filter = ['intermediate_region__state']
     search_fields = ['code', 'name', 'intermediate_region__name']
@@ -42,7 +44,7 @@ class ImmediateRegionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Municipality)
-class MunicipalityAdmin(admin.ModelAdmin):
+class MunicipalityAdmin(RegionScopedAdminMixin, admin.ModelAdmin):
     list_display = ['code', 'name', 'is_capital', 'seaf_category', 'mayor_name', 'mayor_party', 'mayor_mandate_period', 'state_name']
     list_filter = ['is_capital', 'seaf_category', 'immediate_region__intermediate_region__state', 'timezone', 'mayor_party']
     search_fields = ['code', 'name', 'siafi_id', 'area_code', 'immediate_region__name', 'mayor_name', 'mayor_party']
