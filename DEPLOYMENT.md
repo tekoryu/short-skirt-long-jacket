@@ -101,6 +101,7 @@ This will:
 - Build Docker images
 - Start containers
 - Run migrations
+- Load initial data (cities, regions, auth, permissions) via fixtures
 - Collect static files
 - Create superuser (if configured)
 
@@ -265,6 +266,31 @@ docker compose -f compose.prod.yaml exec app python manage.py createsuperuser
 
 # Run migrations manually
 docker compose -f compose.prod.yaml exec app python manage.py migrate
+
+# Load initial data manually (if needed)
+docker compose -f compose.prod.yaml exec app python manage.py load_initial_data
+```
+
+### Fixture Management
+
+The application uses Django fixtures for initial data:
+
+```bash
+# Load all initial data
+docker compose -f compose.prod.yaml exec app python manage.py load_initial_data
+
+# Update fixtures from current database state
+docker compose -f compose.prod.yaml exec app python manage.py dumpdata \
+  cities.Region cities.State cities.IntermediateRegion cities.ImmediateRegion cities.Municipality \
+  --indent 2 --output /app/fixtures/cities_initial_data.json
+
+docker compose -f compose.prod.yaml exec app python manage.py dumpdata \
+  auth.Group custom_auth.ResourcePermission custom_auth.GroupResourcePermission \
+  --indent 2 --output /app/fixtures/auth_initial_data.json
+```
+
+See [`app/fixtures/README.md`](app/fixtures/README.md) for detailed fixture documentation.
+
 ```
 
 ---
@@ -385,7 +411,7 @@ Consider setting up:
 ## Support
 
 - Technical documentation: `README.technical.md`
-- Command reference: `README.commands.md`
+- Fixture documentation: `app/fixtures/README.md`
 - Application health: `https://seaf.cenariodigital.dev/health/`
 
 For issues, check logs first:
