@@ -50,6 +50,10 @@ class PermissionRequiredMixin:
         """
         user = self.request.user
         
+        # Superusers have all permissions
+        if user.is_superuser:
+            return True
+        
         # Check direct user permissions (not region-scoped)
         user_perms = user.custom_permissions.filter(
             resource_permission__resource_name=resource_name,

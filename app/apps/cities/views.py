@@ -191,35 +191,39 @@ def city_api(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Authentication required'}, status=401)
     
-    # Check if user has view permission
-    from apps.auth.models import UserPermission, GroupPermission, UserGroup
-    
-    has_view_permission = False
-    
-    # Check direct permissions
-    user_perms = request.user.custom_permissions.filter(
-        resource_permission__resource_name='cities.city',
-        resource_permission__permission_type='view',
-        is_active=True
-    )
-    
-    if user_perms.exists():
+    # Superusers have all permissions
+    if request.user.is_superuser:
         has_view_permission = True
     else:
-        # Check group permissions
-        user_groups = UserGroup.objects.filter(
-            user=request.user,
-            is_active=True
-        ).values_list('group', flat=True)
+        # Check if user has view permission
+        from apps.auth.models import UserPermission, GroupPermission, UserGroup
         
-        group_perms = GroupPermission.objects.filter(
-            group__in=user_groups,
+        has_view_permission = False
+        
+            # Check direct permissions
+        user_perms = request.user.custom_permissions.filter(
             resource_permission__resource_name='cities.city',
-            resource_permission__permission_type='view'
+            resource_permission__permission_type='view',
+            is_active=True
         )
         
-        if group_perms.exists():
+        if user_perms.exists():
             has_view_permission = True
+        else:
+            # Check group permissions
+            user_groups = UserGroup.objects.filter(
+                user=request.user,
+                is_active=True
+            ).values_list('group', flat=True)
+            
+            group_perms = GroupPermission.objects.filter(
+                group__in=user_groups,
+                resource_permission__resource_name='cities.city',
+                resource_permission__permission_type='view'
+            )
+            
+            if group_perms.exists():
+                has_view_permission = True
     
     if not has_view_permission:
         return JsonResponse({'error': 'Permission denied'}, status=403)

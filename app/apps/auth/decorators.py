@@ -18,6 +18,10 @@ def check_resource_permission(user, resource_name, permission_type, region=None)
     if not user.is_authenticated:
         return False
     
+    # Superusers have all permissions
+    if user.is_superuser:
+        return True
+    
     # Check direct user permissions (not region-scoped)
     user_perms = user.custom_permissions.filter(
         resource_permission__resource_name=resource_name,
@@ -55,6 +59,10 @@ def get_user_permitted_regions(user, resource_name, permission_type):
     """
     if not user.is_authenticated:
         return []
+    
+    # Superusers have global access
+    if user.is_superuser:
+        return None
     
     # Check direct user permissions (grants global access)
     user_perms = user.custom_permissions.filter(
@@ -96,6 +104,10 @@ def permission_required(resource_name, permission_type='view', raise_exception=T
                 if raise_exception:
                     raise PermissionDenied("Authentication required.")
                 return redirect('auth:login')
+            
+            # Superusers have all permissions
+            if request.user.is_superuser:
+                return view_func(request, *args, **kwargs)
             
             # Check direct user permissions
             user_perms = request.user.custom_permissions.filter(
