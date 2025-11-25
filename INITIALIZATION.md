@@ -6,7 +6,7 @@ This document explains how the application initializes and loads data automatica
 
 **Just run:**
 ```bash
-./scripts/boot.sh
+docker compose up --build -d
 ```
 
 Everything else happens automatically. No manual data loading needed.
@@ -20,9 +20,7 @@ Everything else happens automatically. No manual data loading needed.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 1. YOU START CONTAINERS                                     │
-│    $ ./scripts/boot.sh                                      │
-│    OR                                                        │
-│    $ docker compose up                                      │
+│    $ docker compose up --build -d                           │
 └────────────────┬────────────────────────────────────────────┘
                  │
                  ▼
@@ -71,28 +69,6 @@ Everything else happens automatically. No manual data loading needed.
 
 ---
 
-### `/scripts/boot.sh` - Development Convenience Script
-
-**Purpose:** Orchestration script for local development  
-**Called by:** You, manually  
-**When:** When you want a clean build from scratch  
-**Where:** On your host machine  
-
-**What it does:**
-1. Tears down existing containers and volumes (`docker compose down -v`)
-2. Builds and starts containers (`docker compose up --build -d`)
-   - This triggers `run.sh` automatically (see above)
-3. Waits for application health check to pass
-4. Opens browser automatically
-5. Shows useful commands and documentation links
-
-**What it DOESN'T do:**
-- ❌ Run migrations manually (run.sh does this)
-- ❌ Load fixtures manually (run.sh does this)
-- ❌ Create superuser manually (run.sh does this)
-
----
-
 ## Usage Examples
 
 ### First Time Setup
@@ -109,7 +85,7 @@ cp .env.example .env
 nano .env
 
 # Start everything (automatic initialization)
-./scripts/boot.sh
+docker compose up --build -d
 ```
 
 **What happens:**
@@ -118,7 +94,7 @@ nano .env
 - `run.sh` detects empty database
 - Fixtures load automatically (5,570 municipalities, regions, states, groups, permissions)
 - Superuser created
-- Browser opens to http://localhost:8000
+- Application available at http://localhost:8000
 
 **Time:** ~60 seconds (first time with data loading)
 
@@ -128,10 +104,10 @@ nano .env
 
 ```bash
 # If containers are stopped
-docker compose up
+docker compose up -d
 
 # OR for clean rebuild
-./scripts/boot.sh
+docker compose up --build -d
 ```
 
 **What happens:**
@@ -147,7 +123,8 @@ docker compose up
 ### Clean Slate (Reset Everything)
 
 ```bash
-./scripts/boot.sh
+docker compose down -v --remove-orphans
+docker compose up --build -d
 ```
 
 **What happens:**
@@ -239,8 +216,8 @@ Database is empty. Loading initial data...
 **Solution:**
 ```bash
 # Full reset
-docker compose down -v
-./scripts/boot.sh
+docker compose down -v --remove-orphans
+docker compose up --build -d
 ```
 
 ---
@@ -265,8 +242,8 @@ The check only looks at `Region` table. If you manually deleted data but left so
 **Solution:**
 ```bash
 # Force reload
-docker compose down -v          # Wipe everything
-./scripts/boot.sh              # Fresh start
+docker compose down -v --remove-orphans  # Wipe everything
+docker compose up --build -d             # Fresh start
 
 # OR manually
 docker compose exec app python manage.py load_initial_data
@@ -354,12 +331,12 @@ See [`app/fixtures/README.md`](app/fixtures/README.md) for detailed fixture mana
 
 | Task | Command |
 |------|---------|
-| First time setup | `./scripts/boot.sh` |
-| Start containers | `docker compose up` |
-| Clean rebuild | `./scripts/boot.sh` |
+| First time setup | `docker compose up --build -d` |
+| Start containers | `docker compose up -d` |
+| Clean rebuild | `docker compose up --build -d` |
 | View logs | `docker compose logs -f app` |
 | Stop everything | `docker compose down` |
-| Reset database | `docker compose down -v && ./scripts/boot.sh` |
+| Reset database | `docker compose down -v --remove-orphans && docker compose up --build -d` |
 | Manual fixture load | `docker compose exec app python manage.py load_initial_data` |
 | Update fixtures | `./scripts/dump_fixtures.sh` |
 
