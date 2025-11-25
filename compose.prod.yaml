@@ -12,24 +12,35 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        DEV: ${DEV}
-        USE_PROXY: ${USE_PROXY:-false}
-        HTTP_PROXY_URL: ${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+        DEV: "false"
     expose:
       - "8000"
     volumes:
-      - ./app:/app
-      - ./app/logs:/vol/web/logs
+      - log_volume:/vol/web/logs
       - static_volume:/vol/web/static
       - media_volume:/vol/web/media
     environment:
-      - DEBUG=${DEBUG}
+      - DEBUG=false
       - SECRET_KEY=${SECRET_KEY}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -42,11 +53,6 @@ services:
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
-      - HTTP_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
-      - HTTPS_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
-      - http_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
-      - https_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
-      - NO_PROXY=localhost,127.0.0.1,db
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
@@ -57,6 +63,19 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
     networks:
       - default
       - web
@@ -77,8 +96,6 @@ services:
       - "traefik.http.routers.seaf-secure.entrypoints=websecure"
       - "traefik.http.routers.seaf-secure.rule=Host(`seaf.cenariodigital.dev`)"
       - "traefik.http.routers.seaf-secure.tls=true"
-      
-      # OPTIONAL: Uncomment if you are sure your resolver is named "cloudflare"
       - "traefik.http.routers.seaf-secure.tls.certresolver=cloudflare"
       
       # 4. SERVICE DEFINITION
@@ -88,6 +105,7 @@ services:
 
 volumes:
   postgres_data:
+  log_volume:
   static_volume:
   media_volume:
 

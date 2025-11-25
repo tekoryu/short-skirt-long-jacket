@@ -49,9 +49,9 @@ check_env_file() {
 
 # Check if traefik network exists
 check_traefik_network() {
-    if ! docker network ls | grep -q "traefik-public"; then
-        print_warning "Traefik network 'traefik-public' not found. Creating it..."
-        docker network create traefik-public
+    if ! docker network ls | grep -q "web"; then
+        print_warning "Traefik network 'web' not found. Creating it..."
+        docker network create web
         print_success "Traefik network created"
     fi
 }
