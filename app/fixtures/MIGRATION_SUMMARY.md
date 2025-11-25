@@ -74,8 +74,8 @@ python manage.py load_initial_data
    - Creates superuser automatically
 
 2. **`scripts/boot.sh`**
-   - Updated to use `load_initial_data` instead of individual commands
-   - Simplified workflow
+   - **[REMOVED]** No longer needed - all functionality handled by docker compose + run.sh
+   - Initialization now uses standard docker compose commands
 
 3. **`DEPLOYMENT.md`**
    - Updated deployment instructions
@@ -104,7 +104,7 @@ The migration was done as follows:
 
 3. **Updated deployment scripts**:
    - `run.sh` now loads fixtures automatically on empty database
-   - `boot.sh` simplified to use new command
+   - `boot.sh` removed (replaced by standard docker compose commands)
 
 4. **Updated documentation**:
    - Marked old commands as deprecated
@@ -165,7 +165,7 @@ git commit -m "Update fixtures"
 
 If issues arise, rollback is simple:
 
-1. Revert changes to `scripts/run.sh` and `scripts/boot.sh`
+1. Revert changes to `scripts/run.sh`
 2. Re-enable old commands in deployment workflow
 3. Delete fixture files
 
