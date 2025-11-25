@@ -1,4 +1,3 @@
-
 services:
   db:
     image: postgres:15-alpine
@@ -60,18 +59,29 @@ services:
     restart: unless-stopped
     networks:
       - default
-      - traefik-public
+      - web
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.seaf.entrypoints=http"
+      # Crucial: Must match the network name below and in your Traefik container
+      - "traefik.docker.network=web"
+      
+      # 1. HTTP ROUTER (Port 80)
+      - "traefik.http.routers.seaf.entrypoints=web"
       - "traefik.http.routers.seaf.rule=Host(`seaf.cenariodigital.dev`)"
+      
+      # 2. HTTPS REDIRECT MIDDLEWARE
       - "traefik.http.middlewares.seaf-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.seaf.middlewares=seaf-https-redirect"
-      - "traefik.http.routers.seaf-secure.entrypoints=https"
+      
+      # 3. HTTPS ROUTER (Port 443)
+      - "traefik.http.routers.seaf-secure.entrypoints=websecure"
       - "traefik.http.routers.seaf-secure.rule=Host(`seaf.cenariodigital.dev`)"
       - "traefik.http.routers.seaf-secure.tls=true"
+      
+      # OPTIONAL: Uncomment if you are sure your resolver is named "cloudflare"
       - "traefik.http.routers.seaf-secure.tls.certresolver=cloudflare"
+      
+      # 4. SERVICE DEFINITION
       - "traefik.http.routers.seaf-secure.service=seaf"
       - "traefik.http.services.seaf.loadbalancer.server.port=8000"
 
@@ -82,5 +92,5 @@ volumes:
   media_volume:
 
 networks:
-  traefik-public:
+  web:
     external: true
