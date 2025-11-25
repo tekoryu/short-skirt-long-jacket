@@ -105,6 +105,29 @@
     letter-spacing: 0.5px;
 }
 
+.cities-table th a {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    border-radius: 6px;
+}
+
+.cities-table th a:hover {
+    background: rgba(12, 171, 168, 0.08);
+}
+
+.cities-table th.mayor-column,
+.cities-table td.mayor-column {
+    max-width: 250px;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
 .cities-table td {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -155,6 +178,167 @@
     color: var(--border-color);
     margin-bottom: 1rem;
 }
+
+.results-count {
+    padding: 1rem 1.5rem;
+    background: rgba(12, 171, 168, 0.05);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.seaf-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.seaf-0 { background: #e0e0e0; color: #424242; }
+.seaf-1 { background: #e8f5e9; color: #2e7d32; }
+.seaf-2 { background: #fff3e0; color: #e65100; }
+.seaf-3 { background: #fce4ec; color: #c2185b; }
+.seaf-4 { background: #f3e5f5; color: #6a1b9a; }
+.seaf-5 { background: #e3f2fd; color: #1565c0; }
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(12, 171, 168, 0.1);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-btn:hover:not(.disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.pagination-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 0 1rem;
+}
+
+.filters-bar {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 180px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(12, 171, 168, 0.1);
+}
+
+.btn-clear-filters {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-clear-filters:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
 </style>
 {% endblock %}
 
@@ -193,32 +377,149 @@
     </div>
 </div>
 
+<!-- Search and Filters Bar -->
+<div 
+    class="filters-bar"
+    x-data="{ show: false }"
+    x-init="setTimeout(() => show = true, 150)"
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+>
+    <form method="get" action="{% url 'cities:city_list' %}" style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; width: 100%;">
+        <!-- Search Input -->
+        <div class="filter-group" style="flex: 1; min-width: 250px;">
+            <input 
+                type="text" 
+                name="search" 
+                class="search-input" 
+                placeholder="🔍 Buscar município..."
+                value="{{ search_query }}"
+                style="max-width: 100%;"
+            >
+        </div>
+        
+        <!-- Capital Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="fas fa-landmark" style="color: var(--teal-2);"></i>
+                <input 
+                    type="checkbox" 
+                    name="is_capital" 
+                    value="true" 
+                    class="filter-checkbox"
+                    {% if is_capital == 'true' %}checked{% endif %}
+                    onchange="this.form.submit()"
+                >
+                Somente Capitais
+            </label>
+        </div>
+        
+        <!-- SEAF Category Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="fas fa-layer-group" style="color: var(--teal-2);"></i>
+                Categoria SEAF:
+            </label>
+            <select name="seaf_category" class="filter-select" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                <option value="0" {% if seaf_category == '0' %}selected{% endif %}>Categoria 0</option>
+                <option value="1" {% if seaf_category == '1' %}selected{% endif %}>Categoria 1</option>
+                <option value="2" {% if seaf_category == '2' %}selected{% endif %}>Categoria 2</option>
+                <option value="3" {% if seaf_category == '3' %}selected{% endif %}>Categoria 3</option>
+                <option value="null" {% if seaf_category == 'null' %}selected{% endif %}>N/A</option>
+            </select>
+        </div>
+        
+        <!-- Hidden fields -->
+        <input type="hidden" name="sort" value="{{ current_sort }}">
+        <input type="hidden" name="direction" value="{{ current_direction }}">
+        
+        <!-- Clear Filters Button -->
+        {% if search_query or is_capital or seaf_category %}
+        <a href="{% url 'cities:city_list' %}?sort={{ current_sort }}&direction={{ current_direction }}" class="btn-clear-filters">
+            <i class="fas fa-times"></i>
+            <span>Limpar</span>
+        </a>
+        {% endif %}
+    </form>
+</div>
+
 <!-- Cities Table -->
 <div 
     class="cities-table-container"
     x-data="{ show: false }"
-    x-init="setTimeout(() => show = true, 200)"
+    x-init="setTimeout(() => show = true, 250)"
     x-show="show"
     x-transition:enter="transition ease-out duration-500"
     x-transition:enter-start="opacity-0 transform translate-y-4"
     x-transition:enter-end="opacity-100 transform translate-y-0"
 >
     {% if cities %}
+        <div class="results-count">
+            {% if page_obj %}
+                Exibindo {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ page_obj.paginator.count }} municípios
+            {% endif %}
+        </div>
         <table class="cities-table">
             <thead>
                 <tr>
-                    <th><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Nome</th>
-                    <th><i class="fas fa-flag" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Estado</th>
-                    <th><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--teal-2);"></i>População</th>
+                    <th>
+                        <a href="?sort=name&direction={% if current_sort == 'name' and current_direction == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" style="display: flex; align-items: center; justify-content: space-between; color: inherit; text-decoration: none;">
+                            <span><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Município - UF</span>
+                            {% if current_sort == 'name' %}
+                                <i class="fas {% if current_direction == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}" style="color: var(--primary-color);"></i>
+                            {% else %}
+                                <i class="fas fa-sort" style="opacity: 0.3;"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort=seaf_category&direction={% if current_sort == 'seaf_category' and current_direction == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" style="display: flex; align-items: center; justify-content: space-between; color: inherit; text-decoration: none;">
+                            <span><i class="fas fa-layer-group" style="margin-right: 0.5rem; color: var(--teal-2);"></i>SEAF</span>
+                            {% if current_sort == 'seaf_category' %}
+                                <i class="fas {% if current_direction == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}" style="color: var(--primary-color);"></i>
+                            {% else %}
+                                <i class="fas fa-sort" style="opacity: 0.3;"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th class="mayor-column">
+                        <a href="?sort=mayor_name&direction={% if current_sort == 'mayor_name' and current_direction == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" style="display: flex; align-items: center; justify-content: space-between; color: inherit; text-decoration: none;">
+                            <span><i class="fas fa-user-tie" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Prefeito</span>
+                            {% if current_sort == 'mayor_name' %}
+                                <i class="fas {% if current_direction == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}" style="color: var(--primary-color);"></i>
+                            {% else %}
+                                <i class="fas fa-sort" style="opacity: 0.3;"></i>
+                            {% endif %}
+                        </a>
+                    </th>
                     <th style="text-align: center;"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--teal-2);"></i>Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for city in cities %}
                 <tr>
-                    <td><strong>{{ city.name }}</strong></td>
-                    <td>{{ city.state }}</td>
-                    <td>{{ city.population|default:"N/A" }}</td>
+                    <td><strong>{{ city.name }} - {{ city.immediate_region.intermediate_region.state.abbreviation }}</strong></td>
+                    <td>
+                        {% if city.seaf_category is not None %}
+                            <span class="seaf-badge seaf-{{ city.seaf_category }}">Categoria {{ city.seaf_category }}</span>
+                        {% else %}
+                            <span style="color: var(--text-secondary);">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td class="mayor-column" title="{% if city.mayor_name and city.mayor_party %}{{ city.mayor_name }} ({{ city.mayor_party }}){% elif city.mayor_name %}{{ city.mayor_name }}{% endif %}">
+                        {% if city.mayor_name %}
+                            {% if city.mayor_party %}
+                                {{ city.mayor_name|truncatewords:2 }} ({{ city.mayor_party }})
+                            {% else %}
+                                {{ city.mayor_name|truncatewords:2 }}
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
                     <td style="text-align: center;">
                         <a href="{% url 'cities:edit_city' city.id %}" class="btn-edit">
                             <i class="fas fa-edit"></i>
@@ -229,6 +530,55 @@
                 {% endfor %}
             </tbody>
         </table>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ current_sort }}&direction={{ current_direction }}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" class="pagination-btn">
+                    <i class="fas fa-angle-double-left"></i>
+                    Primeira
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ current_sort }}&direction={{ current_direction }}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" class="pagination-btn">
+                    <i class="fas fa-angle-left"></i>
+                    Anterior
+                </a>
+            {% else %}
+                <span class="pagination-btn disabled">
+                    <i class="fas fa-angle-double-left"></i>
+                    Primeira
+                </span>
+                <span class="pagination-btn disabled">
+                    <i class="fas fa-angle-left"></i>
+                    Anterior
+                </span>
+            {% endif %}
+            
+            <span class="pagination-info">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ current_sort }}&direction={{ current_direction }}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" class="pagination-btn">
+                    Próxima
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ current_sort }}&direction={{ current_direction }}{% if is_capital %}&is_capital={{ is_capital }}{% endif %}{% if seaf_category %}&seaf_category={{ seaf_category }}{% endif %}" class="pagination-btn">
+                    Última
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            {% else %}
+                <span class="pagination-btn disabled">
+                    Próxima
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                <span class="pagination-btn disabled">
+                    Última
+                    <i class="fas fa-angle-double-right"></i>
+                </span>
+            {% endif %}
+        </div>
+        {% endif %}
     {% else %}
         <div class="empty-state">
             <i class="fas fa-city"></i>

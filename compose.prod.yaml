@@ -1,3 +1,4 @@
+
 services:
   db:
     image: postgres:15-alpine
@@ -21,6 +22,8 @@ services:
         DEV: ${DEV}
         USE_PROXY: ${USE_PROXY:-false}
         HTTP_PROXY_URL: ${HTTP_PROXY_URL:-http://10.1.101.101:8080}
+    expose:
+      - "8000"
     volumes:
       - ./app:/app
       - ./app/logs:/vol/web/logs
@@ -55,9 +58,29 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - default
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.seaf.entrypoints=http"
+      - "traefik.http.routers.seaf.rule=Host(`seaf.cenariodigital.dev`)"
+      - "traefik.http.middlewares.seaf-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.seaf.middlewares=seaf-https-redirect"
+      - "traefik.http.routers.seaf-secure.entrypoints=https"
+      - "traefik.http.routers.seaf-secure.rule=Host(`seaf.cenariodigital.dev`)"
+      - "traefik.http.routers.seaf-secure.tls=true"
+      - "traefik.http.routers.seaf-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.seaf-secure.service=seaf"
+      - "traefik.http.services.seaf.loadbalancer.server.port=8000"
+
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
 
+networks:
+  traefik-public:
+    external: true

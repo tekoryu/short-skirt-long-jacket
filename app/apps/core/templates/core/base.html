@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SEAG Digital{% endblock %}</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="{% static 'core/images/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'core/images/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'core/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'core/images/favicon-48x48.png' %}">
+    <link rel="icon" type="image/png" sizes="64x64" href="{% static 'core/images/favicon-64x64.png' %}">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{% static 'core/css/main.css' %}?v=2.0" rel="stylesheet">
     
@@ -30,7 +38,7 @@
         <div class="top-bar-left">
             <a href="{% url 'core:main' %}" class="project-title-link">
                 <h1 class="project-title">
-                    <i class="fas fa-city"></i>
+                    <img src="{% static 'core/images/seaf_favicon_white.png' %}" alt="SEAG Digital Logo" class="project-logo">
                     SEAG Digital
                 </h1>
             </a>
@@ -53,7 +61,7 @@
                     :aria-expanded="userMenuOpen"
                 >
                     <i class="fas fa-user-circle"></i>
-                    <span class="user-name">Admin</span>
+                    <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
                     <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': userMenuOpen }"></i>
                 </button>
                 

@@ -1,0 +1,82 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+      - deploy/0.1
+  workflow_dispatch:
+    inputs:
+      log_level:
+        description: 'Log level'
+        required: false
+        default: 'info'
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key ${VPS_USER}@${VPS_HOST} << 'EOF'
+            set -e
+            cd ${VPS_PATH:-/opt/seaf}
+
+            echo "Starting deployment..."
+
+            # Pull latest changes
+            git fetch origin
+            git reset --hard origin/deploy/0.1
+
+            # Run deployment script
+            chmod +x deploy.sh
+            ./deploy.sh
+
+            echo "Deployment completed successfully!"
+          EOF
+
+      - name: Verify deployment
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
+        run: |
+          echo "Waiting for application to start..."
+          sleep 15
+
+          # Check if service is responding
+          if curl -f -k --max-time 10 https://seaf.cenariodigital.dev/health/ > /dev/null 2>&1; then
+            echo "✅ Application is responding!"
+            echo "Deployment successful: https://seaf.cenariodigital.dev"
+          else
+            echo "⚠️ Health check failed. Checking logs..."
+            ssh -i ~/.ssh/deploy_key ${VPS_USER}@${VPS_HOST} "cd ${VPS_PATH:-/opt/seaf} && docker compose -f compose.prod.yaml logs --tail=50"
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs above for details."
+          echo "You may need to SSH into the server manually to investigate."

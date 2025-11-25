@@ -1,6 +1,0 @@
-INFO 2025-10-29 19:20:57,220 <string> 1 140001305004808 Security test
-WARNING 2025-10-29 19:20:57,221 <string> 1 140001305004808 Security warning
-INFO 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Security INFO - should appear in security_file and console
-WARNING 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Security WARNING - should appear in security_file and console
-INFO 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Auth INFO - login attempt simulation
-WARNING 2025-10-29 19:26:31,294 <string> 1 140228170222344 TEST: Auth WARNING - failed login attempt
