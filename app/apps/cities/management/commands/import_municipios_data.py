@@ -15,8 +15,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--file',
             type=str,
-            default='/app/data/municipios-brasileiros/csv/municipios.csv',
-            help='Path to the CSV file (default: /app/data/municipios-brasileiros/csv/municipios.csv)'
+            default='/app/data/repo/municipios.csv',
+            help='Path to the CSV file (default: /app/data/repo/municipios.csv)'
         )
         parser.add_argument(
             '--batch-size',

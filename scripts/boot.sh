@@ -72,6 +72,18 @@ docker compose run --rm app sh -c "python manage.py collectstatic --noinput"
 echo "Importing IBGE data..."
 docker compose run --rm app sh -c "python manage.py import_ibge_data"
 
+echo "Enriching states metadata..."
+docker compose run --rm app sh -c "python manage.py import_estados_data"
+
+echo "Updating municipalities metadata..."
+docker compose run --rm app sh -c "python manage.py import_municipios_data"
+
+echo "Applying SEAF classification data..."
+docker compose run --rm app sh -c "python manage.py import_seaf_data"
+
+echo "Loading Wikipedia infobox data..."
+docker compose run --rm app sh -c "python manage.py import_wiki_data"
+
 echo "Finished booting up the application."
 
 echo "Opening application in browser."

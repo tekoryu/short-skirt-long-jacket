@@ -1,11 +1,8 @@
-
 services:
   db:
     image: postgres:15-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -24,13 +21,11 @@ services:
         DEV: ${DEV}
         USE_PROXY: ${USE_PROXY:-false}
         HTTP_PROXY_URL: ${HTTP_PROXY_URL:-http://10.1.101.101:8080}
-    ports:
-      - "8000:8000"
     volumes:
       - ./app:/app
       - ./app/logs:/vol/web/logs
       - static_volume:/vol/web/static
-      - media_volume:/vol/web/media  
+      - media_volume:/vol/web/media
     environment:
       - DEBUG=${DEBUG}
       - SECRET_KEY=${SECRET_KEY}
@@ -45,7 +40,6 @@ services:
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
-      # proxy settings
       - HTTP_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
       - HTTPS_PROXY=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
       - http_proxy=${HTTP_PROXY_URL:-http://10.1.101.101:8080}
@@ -62,9 +56,8 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-
-
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+
