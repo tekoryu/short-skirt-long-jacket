@@ -10,7 +10,6 @@ COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements-dev.txt /tmp/requirements-dev.txt
 COPY ./scripts /scripts
 COPY ./app /app
-COPY ./data /data
 WORKDIR /app
 EXPOSE 8000
 
