@@ -39,7 +39,7 @@ print_error() {
 
 # Check if .env file exists
 check_env_file() {
-    if [ ! -f .env ]; then
+    if [ ! -f ../.env ]; then
         print_error ".env file not found!"
         print_info "Please copy .env.production to .env and configure it with production values"
         print_info "Command: cp .env.production .env"
