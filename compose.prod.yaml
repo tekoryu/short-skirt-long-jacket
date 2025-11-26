@@ -96,7 +96,7 @@ services:
       - "traefik.http.routers.seaf-secure.entrypoints=websecure"
       - "traefik.http.routers.seaf-secure.rule=Host(`seaf.cenariodigital.dev`)"
       - "traefik.http.routers.seaf-secure.tls=true"
-      - "traefik.http.routers.seaf-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.seaf-secure.tls.certresolver=myresolver"
       
       # 4. SERVICE DEFINITION
       - "traefik.http.routers.seaf-secure.service=seaf"
