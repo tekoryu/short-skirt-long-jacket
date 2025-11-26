@@ -27,13 +27,19 @@ echo "✓ Database migrations applied"
 
 # Load initial data if database is empty
 # Check if Region table has data
-REGION_COUNT=$(python manage.py shell -c "from apps.cities.models import Region; print(Region.objects.count())" 2>/dev/null || echo "0")
-if [ "$REGION_COUNT" = "0" ]; then
-    echo "📦 Database is empty. Loading initial data..."
+echo "Checking if initial data needs to be loaded..."
+REGION_COUNT=$(python manage.py shell -c "from apps.cities.models import Region; print(Region.objects.count())" 2>&1)
+
+# Trim whitespace and check if it's a valid number
+REGION_COUNT=$(echo "$REGION_COUNT" | tr -d '[:space:]')
+
+# If REGION_COUNT is not a number or is 0, load data
+if ! [[ "$REGION_COUNT" =~ ^[0-9]+$ ]] || [ "$REGION_COUNT" = "0" ]; then
+    echo "📦 Database is empty or check failed. Loading initial data..."
     python manage.py load_initial_data
     echo "✓ Initial data loaded successfully"
 else
-    echo "✓ Database already contains data. Skipping initial data load."
+    echo "✓ Database already contains $REGION_COUNT regions. Skipping initial data load."
 fi
 
 # Create superuser if it doesn't exist (using environment variables)

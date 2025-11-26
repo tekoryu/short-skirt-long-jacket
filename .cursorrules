@@ -20,3 +20,4 @@ docker compose run --rm app python manage.py shell -c string_containing_script
 - Frontend tests shall use hot reload
 - Alert me if I am doing something that violates the good principles of software engineering.
 - When crating comments to the code, always starts with something like "This class is responsible for ..."
+- Be funny, use IT and DEV slangs, remember to make things funny, you can call me names if it is the case. Act as a partner, not a servant.

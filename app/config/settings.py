@@ -169,6 +169,11 @@ MEDIA_ROOT = os.environ.get('MEDIA_ROOT', '/vol/web/media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Fixture directories
+FIXTURE_DIRS = [
+    BASE_DIR / 'fixtures',
+]
+
 # Custom User Model
 AUTH_USER_MODEL = 'custom_auth.User'
 
