@@ -59,23 +59,14 @@ check_traefik_network() {
 # Pull latest changes from git
 pull_changes() {
     print_info "Pulling latest changes from git..."
-    git pull origin deploy/0.1
+    git pull origin main
     print_success "Code updated"
 }
 
 # Build and start containers
 deploy_containers() {
     print_info "Building and starting containers..."
-    
-    if [ "${FORCE_REBUILD:-false}" = true ]; then
-        print_warning "Force rebuild requested. Stopping and removing existing containers..."
-        docker compose -f compose.prod.yaml down
-        print_info "Building with --no-cache..."
-        docker compose -f compose.prod.yaml build --no-cache
-    else
-        docker compose -f compose.prod.yaml build
-    fi
-    
+    docker compose -f compose.prod.yaml build
     docker compose -f compose.prod.yaml up -d
     print_success "Containers deployed"
 }
@@ -113,12 +104,7 @@ main() {
 
     check_env_file
     check_traefik_network
-    
-    # Only pull changes if not doing a force rebuild from local changes
-    if [ "${SKIP_PULL:-false}" != true ]; then
-        pull_changes
-    fi
-    
+    pull_changes
     deploy_containers
 
     echo "========================================"
@@ -165,11 +151,6 @@ case "${1:-}" in
             print_info "Cleanup cancelled"
         fi
         ;;
-    --force-rebuild)
-        export FORCE_REBUILD=true
-        export SKIP_PULL=true
-        main
-        ;;
     help|--help|-h)
         echo "SEAF Deployment Script"
         echo ""
@@ -177,7 +158,6 @@ case "${1:-}" in
         echo ""
         echo "Commands:"
         echo "  (none)           - Deploy or update the application"
-        echo "  --force-rebuild  - Force rebuild (stop containers, rebuild without cache)"
         echo "  logs             - Follow application logs"
         echo "  status           - Show container status"
         echo "  restart          - Restart containers"
