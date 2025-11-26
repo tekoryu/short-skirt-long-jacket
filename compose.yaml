@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$DB_USER -d $$DB_NAME"]
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,7 +28,7 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
-      - ./app/logs:/vol/web/logs
+      - log_volume:/vol/web/logs
       - static_volume:/vol/web/static
       - media_volume:/vol/web/media  
     environment:
@@ -66,6 +66,7 @@ services:
 
 volumes:
   postgres_data:
+  log_volume:
   static_volume:
   media_volume:
 
