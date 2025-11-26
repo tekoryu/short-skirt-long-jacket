@@ -1,5 +1,5 @@
 /**
- * Main JavaScript for SEAG Digital
+ * Main JavaScript for SEAF Digital
  * Using Alpine.js for reactivity and HTMX for dynamic content
  */
 
