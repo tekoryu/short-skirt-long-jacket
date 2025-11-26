@@ -141,7 +141,7 @@ case "${1:-}" in
         docker compose -f compose.prod.yaml down
         print_success "Containers stopped"
         ;;
-    clean)
+    clean|--clean)
         print_warning "This will stop containers and remove volumes (including database)!"
         read -p "Are you sure? (yes/no): " -r
         if [[ $REPLY =~ ^[Yy][Ee][Ss]$ ]]; then
@@ -149,6 +149,17 @@ case "${1:-}" in
             print_success "Cleanup completed"
         else
             print_info "Cleanup cancelled"
+        fi
+        ;;
+    clean-deploy)
+        print_warning "This will WIPE ALL DATA and then redeploy!"
+        read -p "Are you sure? (yes/no): " -r
+        if [[ $REPLY =~ ^[Yy][Ee][Ss]$ ]]; then
+            docker compose -f compose.prod.yaml down -v
+            print_success "Cleanup completed"
+            main
+        else
+            print_info "Operation cancelled"
         fi
         ;;
     help|--help|-h)
@@ -163,6 +174,7 @@ case "${1:-}" in
         echo "  restart          - Restart containers"
         echo "  stop             - Stop containers"
         echo "  clean            - Stop and remove all containers and volumes"
+        echo "  clean-deploy     - Wipe all data and redeploy immediately"
         echo "  help             - Show this help message"
         ;;
     *)
