@@ -13,6 +13,9 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" required>
@@ -26,7 +29,7 @@
                         </div>
                     </form>
                     <div class="text-center mt-3">
-                        <p>Don't have an account? <a href="{% url 'auth:register' %}">Register here</a></p>
+                        <p class="text-muted"><small>Don't have an account? Contact your administrator.</small></p>
                     </div>
                 </div>
             </div>

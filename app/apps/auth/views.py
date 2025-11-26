@@ -48,7 +48,10 @@ def login_view(request):
                 )
                 
                 messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
-                return redirect('core:main')
+                
+                # Redirect to 'next' parameter if present, otherwise go to main
+                next_url = request.GET.get('next') or request.POST.get('next') or 'core:main'
+                return redirect(next_url)
             else:
                 messages.error(request, 'Invalid email or password.')
         else:
@@ -78,10 +81,17 @@ def logout_view(request):
 @ratelimit(key='ip', rate='3/1h', method='POST', block=True)
 def register_view(request):
     """
-    User registration view.
+    User registration view - RESTRICTED TO SUPERUSERS ONLY.
+    Only superusers can create new accounts through this interface.
     Rate limited to 3 registrations per hour per IP to prevent spam.
     """
-    if request.user.is_authenticated:
+    # Only superusers can register new users
+    if not request.user.is_authenticated:
+        messages.error(request, 'Registration is restricted. Please contact an administrator.')
+        return redirect('auth:login')
+    
+    if not request.user.is_superuser:
+        messages.error(request, 'You do not have permission to register new users.')
         return redirect('core:main')
 
     if request.method == 'POST':
